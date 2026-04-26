@@ -26,7 +26,18 @@ export type Effect = {
   createdAt: string
 }
 
-export const effects: Effect[] = []
+export const effects: Effect[] = [
+  {
+    slug: "book-flip",
+    title: "Book Flip",
+    category: "hover",
+    tech: ["css"],
+    style: ["3d"],
+    element: "book",
+    description: "Pure CSS hardcover book that opens its cover on hover using 3D transforms",
+    createdAt: "2026-04-26",
+  },
+]
 
 export type CardSize = "large" | "medium" | "small"
 

@@ -1,0 +1,191 @@
+.scene {
+  perspective: 1200px;
+}
+
+.bookGroup {
+  transform-style: preserve-3d;
+  position: relative;
+  width: 180px;
+  height: 240px;
+  cursor: pointer;
+}
+
+.backCover {
+  position: absolute;
+  width: 180px;
+  height: 240px;
+  background: #1a3a5c;
+  border-radius: 3px;
+}
+
+.pages {
+  position: absolute;
+  width: 172px;
+  height: 232px;
+  left: 8px;
+  top: 4px;
+  background: #f5f0e6;
+  border-radius: 0 3px 3px 0;
+  transform: translateZ(1px);
+  overflow: hidden;
+}
+
+.pageLines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 5px,
+    rgba(0, 0, 0, 0.03) 5px,
+    rgba(0, 0, 0, 0.03) 5.5px
+  );
+}
+
+.pageEdgeRight {
+  position: absolute;
+  right: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #f5f0e6 0px,
+    #f5f0e6 1.5px,
+    #e8e0d0 1.5px,
+    #e8e0d0 2px
+  );
+}
+
+.pageEdgeBottom {
+  position: absolute;
+  bottom: 0;
+  left: 2px;
+  right: 2px;
+  height: 3px;
+  background: repeating-linear-gradient(
+    to right,
+    #f5f0e6 0px,
+    #f5f0e6 1.5px,
+    #e8e0d0 1.5px,
+    #e8e0d0 2px
+  );
+}
+
+.frontCover {
+  position: absolute;
+  width: 180px;
+  height: 240px;
+  transform-style: preserve-3d;
+  transform-origin: left center;
+  transform: translateZ(16px) rotateY(0deg);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bookGroup:hover .frontCover {
+  transform: translateZ(16px) rotateY(-28deg);
+}
+
+.coverFace {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #1e4470;
+  border-radius: 2px 4px 4px 2px;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.coverInner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #e8ddd0;
+  border-radius: 2px 4px 4px 2px;
+  backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+.coverThicknessTop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #163858;
+  transform-origin: bottom;
+  transform: rotateX(90deg);
+  border-radius: 2px 2px 0 0;
+}
+
+.coverThicknessRight {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: #163858;
+  transform-origin: left;
+  transform: rotateY(90deg);
+}
+
+.coverThicknessBottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #163858;
+  transform-origin: top;
+  transform: rotateX(-90deg);
+}
+
+.spine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 240px;
+  background: #122e4a;
+  transform: rotateY(-90deg);
+  transform-origin: right center;
+  border-radius: 3px 0 0 3px;
+}
+
+.spineLines {
+  position: absolute;
+  top: 40px;
+  bottom: 40px;
+  left: 4px;
+  right: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.coverTitle {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+}
+
+.coverSubtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+.coverLine {
+  width: 40px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 14px 0;
+}
