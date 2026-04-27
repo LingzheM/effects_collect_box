@@ -37,6 +37,15 @@ export const effects: Effect[] = [
     description: "Pure CSS hardcover book that opens its cover on hover using 3D transforms",
     createdAt: "2026-04-26",
   },
+  {
+    slug: "receipt-printer",
+    title: "Receipt Printer",
+    category: "gesture",
+    tech: ["react"],
+    element: "receipt",
+    description: "Tap to print, drag to tear the receipt off",
+    createdAt: "2026-04-27",
+  },
 ]
 
 export type CardSize = "large" | "medium" | "small"
