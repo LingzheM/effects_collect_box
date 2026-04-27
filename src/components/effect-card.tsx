@@ -14,6 +14,7 @@ export function EffectCard({ category, label, description, size, count }: Props)
     <TransitionLink
       href={`/${category}`}
       className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all hover:border-zinc-200 hover:shadow-md"
+      style={{ viewTransitionName: `card-${category}` }}
     >
       <div
         className="flex-1"

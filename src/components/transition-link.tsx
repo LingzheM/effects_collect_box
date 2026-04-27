@@ -6,10 +6,11 @@ import type { ReactNode } from "react"
 type Props = {
   href: string
   className?: string
+  style?: React.CSSProperties
   children: ReactNode
 }
 
-export function TransitionLink({ href, className, children }: Props) {
+export function TransitionLink({ href, className, style, children }: Props) {
   const router = useRouter()
 
   function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
@@ -24,7 +25,7 @@ export function TransitionLink({ href, className, children }: Props) {
   }
 
   return (
-    <a href={href} className={className} onClick={handleClick}>
+    <a href={href} className={className} style={style} onClick={handleClick}>
       {children}
     </a>
   )

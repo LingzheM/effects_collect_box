@@ -21,8 +21,12 @@ export default async function CategoryPage({ params }: Props) {
   const list = effects.filter((e) => e.category === cat)
 
   return (
-    <main className="min-h-screen px-8 py-12">
-      <div className="mx-auto max-w-[900px]">
+    // This element matches the card's view-transition-name — it "becomes" the card
+    <div
+      className="min-h-screen bg-white"
+      style={{ viewTransitionName: `card-${cat}` }}
+    >
+      <div className="mx-auto max-w-[900px] px-8 py-12">
         <TransitionLink href="/" className="text-xs text-zinc-400 hover:text-zinc-600">
           ← Effects Shelf
         </TransitionLink>
@@ -67,6 +71,6 @@ export default async function CategoryPage({ params }: Props) {
           </div>
         )}
       </div>
-    </main>
+    </div>
   )
 }
