@@ -26,24 +26,39 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  ::view-transition-old(root) {
-    animation: 160ms ease-out both vt-fade-out;
-  }
+  /* Root snapshot has no animation — only the named card morphs */
+  ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: 160ms ease-out both vt-fade-in;
+    animation: none;
+  }
+
+  /* Named card → page container: morph position + size */
+  ::view-transition-group(*) {
+    animation-duration: 400ms;
+    animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  /* Card screenshot fades out quickly as the group starts expanding */
+  ::view-transition-old(*) {
+    animation: 100ms ease-in both vt-out;
+  }
+
+  /* Page content fades in once the expansion is mostly done */
+  ::view-transition-new(*) {
+    animation: 220ms ease-out 180ms both vt-in;
+  }
+
+  /* Root overrides must come after wildcard rules to win specificity */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
   }
 }
 
-@keyframes vt-fade-out {
-  to {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
+@keyframes vt-out {
+  to { opacity: 0; }
 }
 
-@keyframes vt-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
+@keyframes vt-in {
+  from { opacity: 0; }
 }
