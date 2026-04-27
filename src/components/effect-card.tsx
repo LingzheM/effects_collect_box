@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { TransitionLink } from "@/components/transition-link"
 import type { Category, CardSize } from "@/data/effects"
 
 type Props = {
@@ -11,7 +11,7 @@ type Props = {
 
 export function EffectCard({ category, label, description, size, count }: Props) {
   return (
-    <Link
+    <TransitionLink
       href={`/${category}`}
       className="flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all hover:border-zinc-200 hover:shadow-md"
     >
@@ -31,6 +31,6 @@ export function EffectCard({ category, label, description, size, count }: Props)
           <p className="mt-0.5 truncate text-xs text-zinc-400">{description}</p>
         )}
       </div>
-    </Link>
+    </TransitionLink>
   )
 }

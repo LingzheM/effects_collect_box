@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
+import { TransitionLink } from "@/components/transition-link"
 import { effects, categoryMeta } from "@/data/effects"
 import type { Category } from "@/data/effects"
 
@@ -23,9 +23,9 @@ export default async function CategoryPage({ params }: Props) {
   return (
     <main className="min-h-screen px-8 py-12">
       <div className="mx-auto max-w-[900px]">
-        <Link href="/" className="text-xs text-zinc-400 hover:text-zinc-600">
+        <TransitionLink href="/" className="text-xs text-zinc-400 hover:text-zinc-600">
           ← Effects Shelf
-        </Link>
+        </TransitionLink>
         <header className="mt-4 mb-8">
           <h1 className="text-xl font-bold tracking-tight text-zinc-900">{meta.label}</h1>
           <p className="mt-1 text-sm text-zinc-400">{meta.description}</p>
@@ -36,7 +36,7 @@ export default async function CategoryPage({ params }: Props) {
         ) : (
           <div className="grid grid-cols-3 gap-3">
             {list.map((effect) => (
-              <Link
+              <TransitionLink
                 key={effect.slug}
                 href={`/${cat}/${effect.slug}`}
                 className="flex flex-col overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all hover:border-zinc-200 hover:shadow-md"
@@ -62,7 +62,7 @@ export default async function CategoryPage({ params }: Props) {
                     ))}
                   </div>
                 </div>
-              </Link>
+              </TransitionLink>
             ))}
           </div>
         )}
