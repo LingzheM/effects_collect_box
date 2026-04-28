@@ -46,6 +46,15 @@ export const effects: Effect[] = [
     description: "Tap to print, drag to tear the receipt off",
     createdAt: "2026-04-27",
   },
+  {
+    slug: "3d-carousel",
+    title: "3D Carousel",
+    category: "gesture",
+    tech: ["css"],
+    element: "card",
+    description: "Drag-to-rotate 3D carousel with auto-spin; drag is the core interaction",
+    createdAt: "2026-04-27",
+  },
 ]
 
 export type CardSize = "large" | "medium" | "small"
