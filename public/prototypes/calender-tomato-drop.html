@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomato Calendar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
+  :root {
+    --bg: #faf7f2;
+    --cell-bg: #ffffff;
+    --cell-border: #e8e2d8;
+    --text: #2a2520;
+    --text-light: #9a928a;
+    --accent: #d94032;
+    --accent-dark: #b42e22;
+    --header-bg: #2a2520;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Outfit', sans-serif;
+    overflow: hidden;
+  }
+
+  .header {
+    text-align: center;
+    padding: 24px 0 12px;
+    z-index: 10;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .header h1 span {
+    color: var(--accent);
+  }
+
+  .header p {
+    font-size: 12px;
+    color: var(--text-light);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .calendar-container {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    padding: 0 8px;
+  }
+
+  /* Weekday headers */
+  .weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    padding: 0 2px;
+    margin-bottom: 3px;
+  }
+
+  .weekday {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 0;
+  }
+
+  /* Calendar grid - visual only, physics handles collisions */
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    padding: 0 2px;
+    position: relative;
+  }
+
+  .cell {
+    aspect-ratio: 1;
+    background: var(--cell-bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 4px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    border: 1px solid var(--cell-border);
+  }
+
+  .cell.empty {
+    background: transparent;
+    border: 1px dashed rgba(0,0,0,0.06);
+    box-shadow: none;
+  }
+
+  .cell.today {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 2px 8px rgba(217,64,50,0.12);
+  }
+
+  .cell.today .day-num {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Canvas overlay for physics rendering */
+  #physics-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    z-index: 10;
+  }
+
+  .btn {
+    border: none;
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(217,64,50,0.3);
+  }
+  .btn-primary:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(217,64,50,0.35);
+  }
+
+  .btn-secondary {
+    background: var(--cell-bg);
+    color: var(--text);
+    border: 1px solid var(--cell-border);
+  }
+  .btn-secondary:hover {
+    background: #f0ebe3;
+  }
+
+  .counter {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-light);
+    letter-spacing: 1px;
+    z-index: 10;
+  }
+  .counter span {
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>April <span>2026</span></h1>
+  <p>Tomato Tracker</p>
+</div>
+
+<div class="calendar-container" id="calendarContainer">
+  <div class="weekdays">
+    <div class="weekday">Sun</div>
+    <div class="weekday">Mon</div>
+    <div class="weekday">Tue</div>
+    <div class="weekday">Wed</div>
+    <div class="weekday">Thu</div>
+    <div class="weekday">Fri</div>
+    <div class="weekday">Sat</div>
+  </div>
+  <div class="calendar-grid" id="calendarGrid"></div>
+  <canvas id="physics-canvas"></canvas>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" id="dropBtn">Drop Tomatoes</button>
+  <button class="btn btn-secondary" id="resetBtn">Reset</button>
+</div>
+<div class="counter">Tomatoes: <span id="tomatoCount">0</span></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+<script>
+  // ===== CALENDAR SETUP =====
+  const year = 2026, month = 3; // April (0-indexed)
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = 29;
+  const grid = document.getElementById('calendarGrid');
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+
+  for (let i = 0; i < totalCells; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const dayNum = i - firstDay + 1;
+    if (dayNum < 1 || dayNum > daysInMonth) {
+      cell.classList.add('empty');
+    } else {
+      const span = document.createElement('span');
+      span.className = 'day-num';
+      span.textContent = dayNum;
+      cell.appendChild(span);
+      cell.dataset.day = dayNum;
+      if (dayNum === today) cell.classList.add('today');
+    }
+    grid.appendChild(cell);
+  }
+
+  // ===== PHYSICS ENGINE =====
+  const { Engine, Render, World, Bodies, Body, Events, Runner, Composite } = Matter;
+
+  const canvas = document.getElementById('physics-canvas');
+  const gridEl = document.getElementById('calendarGrid');
+
+  function getGridMetrics() {
+    const gridRect = gridEl.getBoundingClientRect();
+    const containerRect = document.getElementById('calendarContainer').getBoundingClientRect();
+    const cells = gridEl.querySelectorAll('.cell');
+    const firstCellRect = cells[0].getBoundingClientRect();
+    const cellW = firstCellRect.width;
+    const cellH = firstCellRect.height;
+    const gap = 3;
+    const offsetX = gridRect.left - containerRect.left;
+    const offsetY = gridRect.top - containerRect.top;
+    return { gridRect, containerRect, cells, cellW, cellH, gap, offsetX, offsetY };
+  }
+
+  let engine, runner, render;
+  let tomatoes = [];
+  let walls = [];
+  let tomatoCount = 0;
+  let dropInterval = null;
+
+  function initPhysics() {
+    const { containerRect, cells, cellW, cellH, gap, offsetX, offsetY } = getGridMetrics();
+
+    // Size canvas to cover the calendar container plus space above for falling
+    const cW = containerRect.width;
+    const cH = containerRect.height + 100;
+    canvas.width = cW * 2; // retina
+    canvas.height = cH * 2;
+    canvas.style.width = cW + 'px';
+    canvas.style.height = cH + 'px';
+    canvas.style.top = '-100px';
+    canvas.style.left = '0';
+
+    engine = Engine.create({
+      gravity: { x: 0, y: 1.8 }
+    });
+
+    // Create walls for each cell
+    const wallThickness = 3;
+    const cols = 7;
+    const rows = Math.ceil(totalCells / 7);
+
+    // Bottom boundary
+    walls.push(Bodies.rectangle(cW / 2, offsetY + 100 + rows * (cellH + gap) + 10, cW, 20, { isStatic: true }));
+
+    // Left & right outer walls
+    walls.push(Bodies.rectangle(offsetX - 5, offsetY + 100 + rows * (cellH + gap) / 2, 10, rows * (cellH + gap) + 40, { isStatic: true }));
+    walls.push(Bodies.rectangle(offsetX + cols * (cellW + gap) + 5, offsetY + 100 + rows * (cellH + gap) / 2, 10, rows * (cellH + gap) + 40, { isStatic: true }));
+
+    // Internal cell walls — vertical dividers for each row
+    for (let row = 0; row < rows; row++) {
+      const rowY = offsetY + 100 + row * (cellH + gap);
+      // Bottom of each cell row
+      walls.push(Bodies.rectangle(
+        offsetX + cols * (cellW + gap) / 2,
+        rowY + cellH + 1,
+        cols * (cellW + gap),
+        wallThickness,
+        { isStatic: true }
+      ));
+      // Vertical walls between columns
+      for (let col = 0; col <= cols; col++) {
+        const wallX = offsetX + col * (cellW + gap) - gap / 2;
+        walls.push(Bodies.rectangle(
+          wallX,
+          rowY + cellH / 2,
+          wallThickness,
+          cellH,
+          { isStatic: true }
+        ));
+      }
+    }
+
+    World.add(engine.world, walls);
+
+    runner = Runner.create();
+    Runner.run(runner, engine);
+
+    // Render loop
+    requestAnimationFrame(drawLoop);
+  }
+
+  function drawLoop() {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.scale(2, 2); // retina
+
+    // Draw tomatoes
+    for (const tomato of tomatoes) {
+      const { position, circleRadius } = tomato;
+      const x = position.x;
+      const y = position.y;
+      const r = circleRadius;
+
+      // Tomato body
+      const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.3, r * 0.1, x, y, r);
+      grad.addColorStop(0, '#ff6b5a');
+      grad.addColorStop(0.5, '#e04030');
+      grad.addColorStop(1, '#a82818');
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Tomato highlight
+      ctx.beginPath();
+      ctx.arc(x - r * 0.2, y - r * 0.25, r * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fill();
+
+      // Stem
+      ctx.beginPath();
+      ctx.moveTo(x - 2, y - r + 1);
+      ctx.quadraticCurveTo(x, y - r - 5, x + 3, y - r - 3);
+      ctx.strokeStyle = '#4a7a2a';
+      ctx.lineWidth = 1.8;
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // Leaf
+      ctx.beginPath();
+      ctx.ellipse(x + 3, y - r - 2, 4, 2, 0.3, 0, Math.PI * 2);
+      ctx.fillStyle = '#5a9a32';
+      ctx.fill();
+    }
+
+    ctx.restore();
+    requestAnimationFrame(drawLoop);
+  }
+
+  // Get cell center position for a given day
+  function getCellCenter(day) {
+    const { cellW, cellH, gap, offsetX, offsetY } = getGridMetrics();
+    const idx = firstDay + day - 1;
+    const col = idx % 7;
+    const row = Math.floor(idx / 7);
+    return {
+      x: offsetX + col * (cellW + gap) + cellW / 2,
+      y: offsetY + 100 + row * (cellH + gap) // drop from top of that row
+    };
+  }
+
+  function dropTomato(day) {
+    const { cellW } = getGridMetrics();
+    const center = getCellCenter(day);
+    const radius = Math.min(cellW * 0.16, 8);
+
+    // Random horizontal offset within cell
+    const offsetX = (Math.random() - 0.5) * cellW * 0.5;
+
+    const tomato = Bodies.circle(
+      center.x + offsetX,
+      -20 - Math.random() * 60, // start above screen
+      radius,
+      {
+        restitution: 0.45,
+        friction: 0.3,
+        density: 0.002,
+        frictionAir: 0.001,
+      }
+    );
+
+    World.add(engine.world, tomato);
+    tomatoes.push(tomato);
+    tomatoCount++;
+    document.getElementById('tomatoCount').textContent = tomatoCount;
+  }
+
+  function startDropping() {
+    if (dropInterval) return;
+    let currentDay = 1;
+    let dropsPerDay = 0;
+    const tomatoesPerDay = 3;
+
+    dropInterval = setInterval(() => {
+      if (currentDay > daysInMonth) {
+        clearInterval(dropInterval);
+        dropInterval = null;
+        return;
+      }
+
+      dropTomato(currentDay);
+      dropsPerDay++;
+
+      if (dropsPerDay >= tomatoesPerDay) {
+        dropsPerDay = 0;
+        currentDay++;
+      }
+    }, 120);
+  }
+
+  function resetAll() {
+    if (dropInterval) {
+      clearInterval(dropInterval);
+      dropInterval = null;
+    }
+
+    // Remove all tomato bodies
+    for (const t of tomatoes) {
+      World.remove(engine.world, t);
+    }
+    tomatoes = [];
+    tomatoCount = 0;
+    document.getElementById('tomatoCount').textContent = '0';
+  }
+
+  // ===== INIT =====
+  document.getElementById('dropBtn').addEventListener('click', startDropping);
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+  // Wait for layout then init physics
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      initPhysics();
+    });
+  });
+</script>
+
+</body>
+</html>
