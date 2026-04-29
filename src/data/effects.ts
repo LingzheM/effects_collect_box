@@ -55,6 +55,15 @@ export const effects: Effect[] = [
     description: "Drag-to-rotate 3D carousel with auto-spin; drag is the core interaction",
     createdAt: "2026-04-27",
   },
+  {
+    slug: "tomato-calendar",
+    title: "Tomato Calendar",
+    category: "background",
+    tech: ["canvas", "matter-js"],
+    element: "calendar",
+    description: "Physics tomatoes rain into calendar cells; calendar cells act as physics containers",
+    createdAt: "2026-04-29",
+  },
 ]
 
 export type CardSize = "large" | "medium" | "small"
