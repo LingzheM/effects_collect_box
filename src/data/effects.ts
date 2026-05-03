@@ -56,6 +56,15 @@ export const effects: Effect[] = [
     createdAt: "2026-04-27",
   },
   {
+    slug: "burn-paper",
+    title: "Burn Paper",
+    category: "background",
+    tech: ["shader", "three.js"],
+    element: "paper",
+    description: "Paper burn simulation: FBM noise texture drives a WebGL shader with fire-front gradient, char edge, and UV distortion",
+    createdAt: "2026-05-03",
+  },
+  {
     slug: "tomato-calendar",
     title: "Tomato Calendar",
     category: "background",
