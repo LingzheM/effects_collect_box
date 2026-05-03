@@ -13,6 +13,10 @@ import { ParticleSystem } from "./particles"
 // ── Phase 5: smoke + ember particle system
 //     Task 5.1: smoke from char edge — upward drift, Gaussian dots, dark gray→transparent
 //     Task 5.2: embers from fire band — fast ejection, gravity, orange→black, shrink
+// ── Phase 6: performance + debug
+//     Task 6.1: mobile uses 256² noise; 512² on desktop
+//     Task 6.2: ?debug=noise / ?debug=threshold URL params; FPS+threshold overlay
+//     Task 6.3: FloatType DataTexture falls back to UnsignedByteType when unavailable
 
 // ── Task 4.1: Canvas paper grain texture ─────────────────────────────────────
 // Generates a 512² warm-white base with fine random-dot grain, mimicking
@@ -153,14 +157,57 @@ const FRAG_BURN = /* glsl */`
   }
 `
 
+// Task 6.2: debug shader — pure noise grayscale (?debug=noise)
+const FRAG_DEBUG_NOISE = /* glsl */`
+  precision highp float;
+  uniform sampler2D uNoise;
+  varying vec2 vUv;
+  void main() {
+    float n = texture2D(uNoise, vUv).r;
+    gl_FragColor = vec4(n, n, n, 1.0);
+  }
+`
+
+// Task 6.2: debug shader — threshold heatmap (?debug=threshold)
+// blue=burned · red/yellow=fire front · white=unburned
+const FRAG_DEBUG_THRESHOLD = /* glsl */`
+  precision highp float;
+  uniform sampler2D uNoise;
+  uniform float uThreshold;
+  uniform float uEdgeWidth;
+  uniform vec2  uOrigin;
+  uniform vec2  uOrigin2;
+  varying vec2 vUv;
+  void main() {
+    const float K = 0.4, MAX_D = 1.4142;
+    float d = min(distance(vUv, uOrigin), distance(vUv, uOrigin2));
+    float n = texture2D(uNoise, vUv).r;
+    float en = (n + d * K) / (1.0 + K * MAX_D);
+    vec3 col;
+    if (en < uThreshold - uEdgeWidth) {
+      col = vec3(0.10, 0.10, 0.70);                             // blue = burned
+    } else if (en <= uThreshold) {
+      float t = (en - (uThreshold - uEdgeWidth)) / uEdgeWidth;
+      col = mix(vec3(0.80, 0.10, 0.10), vec3(1.0, 0.85, 0.0), t); // red→yellow = front
+    } else {
+      col = vec3(1.0, 1.0, 1.0);                                // white = unburned
+    }
+    gl_FragColor = vec4(col, 1.0);
+  }
+`
+
 type BurnState = "burning" | "done"
 
 export default function BurnPaper() {
   const mountRef = useRef<HTMLDivElement>(null)
-  const [hint, setHint] = useState<string>("click anywhere to ignite")
+  const [hint, setHint]           = useState<string>("click anywhere to ignite")
+  const [debugInfo, setDebugInfo] = useState<string>("")
 
   useEffect(() => {
     const mount = mountRef.current!
+
+    // ── Task 6.2: read ?debug= URL param ─────────────────────────────────────
+    const debugMode = new URLSearchParams(window.location.search).get("debug") ?? ""
 
     // ── Phase 0 · Renderer ────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
@@ -174,16 +221,39 @@ export default function BurnPaper() {
     camera.position.z = 1
     const scene = new THREE.Scene()
 
-    // ── Phase 0 · Plane geometry — subdivided for curl (Task 4.2) ─────────────
-    const geometry = new THREE.PlaneGeometry(2, 2, 128, 128)
+    // ── Phase 0 · Plane geometry ──────────────────────────────────────────────
+    // Debug modes use 1×1 segments (no curl needed for visualisation)
+    const segments = debugMode ? 1 : 128
+    const geometry = new THREE.PlaneGeometry(2, 2, segments, segments)
+
+    // ── Task 6.3: FloatType capability check ──────────────────────────────────
+    // WebGL2 supports R32F natively; WebGL1 requires OES_texture_float extension
+    const caps = renderer.capabilities
+    const supportsFloat = caps.isWebGL2 || renderer.extensions.get("OES_texture_float") !== null
+
+    // ── Task 6.1: mobile → 256² noise; desktop → 512² ─────────────────────────
+    const isMobile = window.innerWidth < 768 || window.devicePixelRatio > 1.5
+    const NOISE_SIZE = isMobile ? 256 : 512
 
     // ── Phase 1 · FBM DataTexture ─────────────────────────────────────────────
-    const NOISE_SIZE = 512
-    const noiseData = generateFBMTexture(NOISE_SIZE, 5, 3.5)
-    const noiseTexture = new THREE.DataTexture(
-      noiseData, NOISE_SIZE, NOISE_SIZE,
-      THREE.RedFormat, THREE.FloatType,
-    )
+    const noiseData = supportsFloat
+      ? generateFBMTexture(NOISE_SIZE, 5, 3.5)
+      : null  // UnsignedByte path uses scaled Uint8Array below
+
+    let texData: Float32Array | Uint8Array
+    let texType: typeof THREE.FloatType | typeof THREE.UnsignedByteType
+    if (supportsFloat && noiseData) {
+      texData = noiseData
+      texType = THREE.FloatType
+    } else {
+      // Fallback: generate FBM then quantise to Uint8 [0,255] (Task 6.3)
+      const f32 = generateFBMTexture(NOISE_SIZE, 5, 3.5)
+      texData = new Uint8Array(f32.length)
+      for (let i = 0; i < f32.length; i++) texData[i] = Math.round(f32[i] * 255)
+      texType = THREE.UnsignedByteType
+    }
+
+    const noiseTexture = new THREE.DataTexture(texData, NOISE_SIZE, NOISE_SIZE, THREE.RedFormat, texType)
     noiseTexture.wrapS = THREE.RepeatWrapping
     noiseTexture.wrapT = THREE.RepeatWrapping
     noiseTexture.minFilter = THREE.LinearMipmapLinearFilter
@@ -195,22 +265,25 @@ export default function BurnPaper() {
     const paperTexture = createPaperTexture(512)
 
     // ── Phase 2 · ShaderMaterial ──────────────────────────────────────────────
+    // Task 6.2: debug modes bypass FRAG_BURN with simpler diagnostic shaders
     const EDGE_WIDTH = 0.06
+    const fragShader = debugMode === "noise"     ? FRAG_DEBUG_NOISE
+                     : debugMode === "threshold" ? FRAG_DEBUG_THRESHOLD
+                     : FRAG_BURN
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uNoise:     { value: noiseTexture },
         uPaperTex:  { value: paperTexture },
-        uThreshold: { value: 0.0 },
+        uThreshold: { value: debugMode ? 0.45 : 0.0 }, // static preview in debug
         uEdgeWidth: { value: EDGE_WIDTH },
         uTime:      { value: 0.0 },
         uOrigin:    { value: new THREE.Vector2(0.0, 1.0) },
         uOrigin2:   { value: new THREE.Vector2(0.0, 1.0) },
       },
       vertexShader:        VERT,
-      fragmentShader:      FRAG_BURN,
-      transparent:         true,
+      fragmentShader:      fragShader,
+      transparent:         !debugMode,
       side:                THREE.DoubleSide,
-      // Task 4.2: prevent z-fighting when smoke particles are added in Phase 5
       polygonOffset:       true,
       polygonOffsetFactor: -1,
     })
@@ -224,10 +297,13 @@ export default function BurnPaper() {
     // CPU-side noise lookup for particle spawn position validation
     // Mirrors the effectiveNoise formula from the fragment shader
     const K = 0.4, MAX_D = 1.4142
+    // noiseData is non-null for Float32 path; for UnsignedByte we use texData (Uint8/255)
+    const cpuNoise: Float32Array | Uint8Array = (noiseData as Float32Array | null) ?? (texData as Uint8Array)
+    const cpuScale = supportsFloat ? 1 : 1 / 255
     function effectiveNoiseAt(u: number, v: number, o1: THREE.Vector2, o2: THREE.Vector2): number {
       const nx = Math.min((u * NOISE_SIZE) | 0, NOISE_SIZE - 1)
       const ny = Math.min((v * NOISE_SIZE) | 0, NOISE_SIZE - 1)
-      const n = noiseData[ny * NOISE_SIZE + nx]
+      const n = cpuNoise[ny * NOISE_SIZE + nx] * cpuScale
       const d1 = Math.sqrt((u - o1.x) ** 2 + (v - o1.y) ** 2)
       const d2 = Math.sqrt((u - o2.x) ** 2 + (v - o2.y) ** 2)
       return (n + Math.min(d1, d2) * K) / (1 + K * MAX_D)
@@ -266,6 +342,10 @@ export default function BurnPaper() {
     const EMBER_PER_S = 10  // ember spawns/second during burn
     let smokeAcc = 0, emberAcc = 0
 
+    // Task 6.2: FPS rolling average (last 60 frames)
+    const fpsBuf = new Float32Array(60)
+    let fpsIdx = 0, fpsUpdateTimer = 0
+
     let rafId: number
     function animate(ms: number) {
       rafId = requestAnimationFrame(animate)
@@ -274,6 +354,19 @@ export default function BurnPaper() {
       prevSec = sec
 
       material.uniforms.uTime.value = sec
+
+      // FPS tracking (Task 6.2)
+      if (delta > 0) {
+        fpsBuf[fpsIdx % 60] = 1 / delta
+        fpsIdx++
+      }
+      fpsUpdateTimer += delta
+      if (debugMode && fpsUpdateTimer > 0.5) {
+        fpsUpdateTimer = 0
+        const avg = fpsBuf.reduce((s, v) => s + v, 0) / 60
+        const thr = material.uniforms.uThreshold.value
+        setDebugInfo(`FPS ${avg.toFixed(0)}  |  threshold ${thr.toFixed(3)}  |  noise ${NOISE_SIZE}²  |  ${supportsFloat ? "f32" : "u8"}`)
+      }
 
       if (burnState === "burning") {
         const speed = 0.025 * (1 + 0.2 * Math.sin(sec * 0.7))
@@ -350,6 +443,19 @@ export default function BurnPaper() {
   return (
     <div style={{ width: "100vw", height: "100vh", background: "#1a1410", position: "relative", cursor: "crosshair" }}>
       <div ref={mountRef} style={{ width: "100%", height: "100%" }} />
+
+      {/* Task 6.2: debug info overlay (top-left, only visible in debug mode) */}
+      {debugInfo && (
+        <pre style={{
+          position: "absolute", top: 12, left: 14,
+          fontFamily: "monospace", fontSize: 11, lineHeight: 1.5,
+          color: "rgba(120,220,120,0.85)", pointerEvents: "none",
+          margin: 0, whiteSpace: "pre",
+        }}>
+          {debugInfo}
+        </pre>
+      )}
+
       {hint && (
         <p style={{
           position: "absolute", bottom: 24, left: 0, right: 0,
