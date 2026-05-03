@@ -3,17 +3,16 @@
 import { useRef, useEffect, useState } from "react"
 import * as THREE from "three"
 import { generateFBMTexture } from "./noise"
+import { ParticleSystem } from "./particles"
 
 // ── Phase 0: scene foundation
 // ── Phase 1: FBM DataTexture
 // ── Phase 2: full burn ShaderMaterial
 // ── Phase 3: animation + interaction
 // ── Phase 4: paper visual enhancement
-//     Task 4.1: Canvas-generated paper grain → uPaperTex; unburned region
-//               samples the texture instead of flat warm-white
-//     Task 4.2: PlaneGeometry subdivided to 128×128; vertex shader samples
-//               uNoise to apply Y curl at the burn front (paper lifting edge);
-//               polygonOffset avoids z-fighting with future smoke particles
+// ── Phase 5: smoke + ember particle system
+//     Task 5.1: smoke from char edge — upward drift, Gaussian dots, dark gray→transparent
+//     Task 5.2: embers from fire band — fast ejection, gravity, orange→black, shrink
 
 // ── Task 4.1: Canvas paper grain texture ─────────────────────────────────────
 // Generates a 512² warm-white base with fine random-dot grain, mimicking
@@ -218,6 +217,22 @@ export default function BurnPaper() {
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
+    // ── Phase 5 · Particle system ─────────────────────────────────────────────
+    const particles = new ParticleSystem()
+    scene.add(particles.points)
+
+    // CPU-side noise lookup for particle spawn position validation
+    // Mirrors the effectiveNoise formula from the fragment shader
+    const K = 0.4, MAX_D = 1.4142
+    function effectiveNoiseAt(u: number, v: number, o1: THREE.Vector2, o2: THREE.Vector2): number {
+      const nx = Math.min((u * NOISE_SIZE) | 0, NOISE_SIZE - 1)
+      const ny = Math.min((v * NOISE_SIZE) | 0, NOISE_SIZE - 1)
+      const n = noiseData[ny * NOISE_SIZE + nx]
+      const d1 = Math.sqrt((u - o1.x) ** 2 + (v - o1.y) ** 2)
+      const d2 = Math.sqrt((u - o2.x) ** 2 + (v - o2.y) ** 2)
+      return (n + Math.min(d1, d2) * K) / (1 + K * MAX_D)
+    }
+
     // ── Phase 3 · Burn state ──────────────────────────────────────────────────
     let burnState: BurnState = "done"
     let prevSec = 0
@@ -236,6 +251,7 @@ export default function BurnPaper() {
         material.uniforms.uThreshold.value = 0
         material.uniforms.uOrigin.value.copy(uv)
         material.uniforms.uOrigin2.value.copy(uv)
+        particles.reset()
         burnState = "burning"
         setHint("click again to add a second fire")
       } else {
@@ -246,6 +262,10 @@ export default function BurnPaper() {
     mount.addEventListener("pointerdown", onPointerDown)
 
     // ── Render loop ───────────────────────────────────────────────────────────
+    const SMOKE_PER_S = 35  // smoke spawns/second during burn
+    const EMBER_PER_S = 10  // ember spawns/second during burn
+    let smokeAcc = 0, emberAcc = 0
+
     let rafId: number
     function animate(ms: number) {
       rafId = requestAnimationFrame(animate)
@@ -265,8 +285,45 @@ export default function BurnPaper() {
         } else {
           material.uniforms.uThreshold.value = next
         }
+
+        // Task 5.1 / 5.2: spawn particles along fire front
+        const threshold = material.uniforms.uThreshold.value
+        const o1 = material.uniforms.uOrigin.value as THREE.Vector2
+        const o2 = material.uniforms.uOrigin2.value as THREE.Vector2
+
+        smokeAcc += SMOKE_PER_S * delta
+        emberAcc += EMBER_PER_S * delta
+
+        // Each spawn attempt: random UV → check zone → spawn or discard
+        const ATTEMPTS_PER_SPAWN = 12
+        while (smokeAcc >= 1) {
+          for (let a = 0; a < ATTEMPTS_PER_SPAWN; a++) {
+            const u = Math.random(), v = Math.random()
+            const en = effectiveNoiseAt(u, v, o1, o2)
+            // Char zone: just behind the fire front (Task 5.1)
+            if (en >= threshold - EDGE_WIDTH * 2.2 && en < threshold - EDGE_WIDTH * 0.5) {
+              particles.spawnSmoke(u * 2 - 1, v * 2 - 1)
+              break
+            }
+          }
+          smokeAcc--
+        }
+
+        while (emberAcc >= 1) {
+          for (let a = 0; a < ATTEMPTS_PER_SPAWN; a++) {
+            const u = Math.random(), v = Math.random()
+            const en = effectiveNoiseAt(u, v, o1, o2)
+            // Fire band: active combustion zone (Task 5.2)
+            if (en >= threshold - EDGE_WIDTH && en <= threshold + EDGE_WIDTH * 0.5) {
+              particles.spawnEmber(u * 2 - 1, v * 2 - 1)
+              break
+            }
+          }
+          emberAcc--
+        }
       }
 
+      particles.update(delta)
       renderer.render(scene, camera)
     }
     rafId = requestAnimationFrame(animate)
@@ -285,6 +342,7 @@ export default function BurnPaper() {
       material.dispose()
       noiseTexture.dispose()
       paperTexture.dispose()
+      particles.dispose()
       mount.removeChild(renderer.domElement)
     }
   }, [])
