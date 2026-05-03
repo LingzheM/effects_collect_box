@@ -58,10 +58,10 @@ export const effects: Effect[] = [
   {
     slug: "burn-paper",
     title: "Burn Paper",
-    category: "background",
-    tech: ["shader", "three.js"],
+    category: "click",
+    tech: ["webgl", "shader"],
     element: "paper",
-    description: "Paper burn simulation: FBM noise texture drives a WebGL shader with fire-front gradient, char edge, and UV distortion",
+    description: "Click anywhere to ignite; FBM noise drives a WebGL burn shader with fire-front gradient, char edge, curl deformation, and smoke/ember particles",
     createdAt: "2026-05-03",
   },
   {
