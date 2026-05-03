@@ -2,11 +2,32 @@
 
 import { useRef, useEffect } from "react"
 import * as THREE from "three"
+import { generateFBMTexture } from "./noise"
 
-// Phase 0 — Scene foundation
-// Task 0.1: WebGLRenderer (alpha:true, low toneMappingExposure), OrthographicCamera
-// Task 0.2: PlaneGeometry(2,2,1,1) fills NDC exactly; UV origin bottom-left (0,0),
-//           top-left (0,1). Burn origin in Phase 2 will default to UV (0,1) = top-left corner.
+// Phase 0: scene foundation (renderer, camera, plane geometry)
+// Phase 1: FBM DataTexture + noise-verification shader
+//   Task 1.1: FBM (5-octave Perlin) chosen for natural char-edge feel
+//   Task 1.2: CPU pre-bake → DataTexture (RedFormat/FloatType, 512²)
+//   Task 1.3: noise.ts implements fbm + generateFBMTexture with [0,1] remap
+//   Task 1.4: verify noise by displaying it as grayscale via ShaderMaterial
+
+// ── Verification shader (Phase 1) — replaced by full burn shader in Phase 2 ──
+const VERT = /* glsl */`
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+
+const FRAG_NOISE_DEBUG = /* glsl */`
+  uniform sampler2D uNoise;
+  varying vec2 vUv;
+  void main() {
+    float n = texture2D(uNoise, vUv).r;
+    gl_FragColor = vec4(n, n, n, 1.0);
+  }
+`
 
 export default function BurnPaper() {
   const mountRef = useRef<HTMLDivElement>(null)
@@ -14,34 +35,50 @@ export default function BurnPaper() {
   useEffect(() => {
     const mount = mountRef.current!
 
-    // ── Task 0.1 · Renderer ──────────────────────────────────────────────────
+    // ── Phase 0 · Renderer ────────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: false })
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    // Low exposure: flame emits its own light, bright pixels should feel hot not blown-out
     renderer.toneMappingExposure = 0.75
-    // Limit DPR on mobile to avoid fillrate stalls
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
     renderer.setSize(mount.clientWidth, mount.clientHeight)
     mount.appendChild(renderer.domElement)
 
-    // OrthographicCamera: frustum exactly (-1,1,1,-1) matches PlaneGeometry(2,2) in NDC
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
     camera.position.z = 1
-
     const scene = new THREE.Scene()
 
-    // ── Task 0.2 · Plane geometry ─────────────────────────────────────────────
-    // Segments 1×1 for now. Phase 4 will subdivide for vertex curl deformation.
-    // UV layout (Three.js default for PlaneGeometry):
-    //   bottom-left (0,0) · bottom-right (1,0) · top-left (0,1) · top-right (1,1)
-    // → burn origin uOrigin = vec2(0.0, 1.0) maps to top-left corner in screen space
+    // ── Phase 0 · Plane geometry ──────────────────────────────────────────────
+    // Segments 1×1; Phase 4 will raise to 128×128 for curl vertex deformation
     const geometry = new THREE.PlaneGeometry(2, 2, 1, 1)
 
-    // Placeholder material — replaced by ShaderMaterial in Phase 2
-    const material = new THREE.MeshBasicMaterial({
-      color: 0xfff8f0, // warm paper white
-      side: THREE.DoubleSide,
+    // ── Phase 1 · FBM DataTexture (Task 1.3) ─────────────────────────────────
+    const NOISE_SIZE = 512
+    const noiseData = generateFBMTexture(NOISE_SIZE, 5, 3.5)
+
+    const noiseTexture = new THREE.DataTexture(
+      noiseData,
+      NOISE_SIZE,
+      NOISE_SIZE,
+      THREE.RedFormat,
+      THREE.FloatType,
+    )
+    noiseTexture.wrapS = THREE.RepeatWrapping
+    noiseTexture.wrapT = THREE.RepeatWrapping
+    noiseTexture.minFilter = THREE.LinearMipmapLinearFilter
+    noiseTexture.magFilter = THREE.LinearFilter
+    noiseTexture.generateMipmaps = true
+    noiseTexture.needsUpdate = true
+
+    // ── Phase 1 · Noise verification shader (Task 1.4) ───────────────────────
+    // Displays noise as grayscale to confirm continuous gradient coverage [0,1]
+    const material = new THREE.ShaderMaterial({
+      uniforms: {
+        uNoise: { value: noiseTexture },
+      },
+      vertexShader: VERT,
+      fragmentShader: FRAG_NOISE_DEBUG,
     })
+
     const mesh = new THREE.Mesh(geometry, material)
     scene.add(mesh)
 
@@ -53,7 +90,6 @@ export default function BurnPaper() {
     }
     animate()
 
-    // Resize: only renderer size needs updating; ortho camera frustum is NDC-fixed
     function onResize() {
       renderer.setSize(mount.clientWidth, mount.clientHeight)
     }
@@ -65,6 +101,7 @@ export default function BurnPaper() {
       renderer.dispose()
       geometry.dispose()
       material.dispose()
+      noiseTexture.dispose()
       mount.removeChild(renderer.domElement)
     }
   }, [])
