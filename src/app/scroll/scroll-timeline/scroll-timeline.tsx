@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger"
 
 gsap.registerPlugin(ScrollTrigger)
 
-const SECTIONS = [
+const AUTO_SECTIONS = [
   {
     index: "01",
     title: "Motion begins",
@@ -18,11 +18,18 @@ const SECTIONS = [
     title: "Rhythm matters",
     subtitle: "Staggered timing creates narrative weight",
   },
-  {
-    index: "03",
-    title: "Scrub to feel",
-    subtitle: "When the scroll position IS the animation",
-  },
+]
+
+const SCRUB_SECTION = {
+  index: "03",
+  title: "Scrub to feel",
+  subtitle: "When the scroll position IS the animation",
+}
+
+const STATS = [
+  { value: 100, label: "scroll progress" },
+  { value: 60, label: "fps locked" },
+  { value: 0, label: "jank frames" },
 ]
 
 export default function ScrollTimeline() {
@@ -38,7 +45,7 @@ export default function ScrollTimeline() {
     lenis.on("scroll", ScrollTrigger.update)
 
     const ctx = gsap.context(() => {
-      // --- Auto-play entrance timeline (Sections 01 & 02) ---
+      // --- Auto-play entrance sections ---
       const autoSections = containerRef.current?.querySelectorAll<HTMLElement>(
         ".js-section-auto"
       )
@@ -47,19 +54,19 @@ export default function ScrollTimeline() {
         const subtitle = section.querySelector(".js-subtitle")
         const line = section.querySelector(".js-line")
 
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top 75%",
-            toggleActions: "play none none none",
-          },
-        })
-
-        tl.fromTo(
-          title,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
-        )
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: section,
+              start: "top 75%",
+              toggleActions: "play none none none",
+            },
+          })
+          .fromTo(
+            title,
+            { y: 40, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.7, ease: "power3.out" }
+          )
           .fromTo(
             subtitle,
             { y: 20, opacity: 0 },
@@ -74,32 +81,107 @@ export default function ScrollTimeline() {
           )
       })
 
-      // --- Scrub mode (Section 03) ---
+      // --- Scrub section ---
       const scrubSection =
         containerRef.current?.querySelector<HTMLElement>(".js-section-scrub")
       if (scrubSection) {
-        const title = scrubSection.querySelector(".js-title")
-        const subtitle = scrubSection.querySelector(".js-subtitle")
-        const line = scrubSection.querySelector(".js-line")
-
-        const tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: scrubSection,
-            start: "top 80%",
-            end: "center center",
-            scrub: 1.5,
-          },
-        })
-
-        tl.fromTo(title, { y: 60, opacity: 0 }, { y: 0, opacity: 1 })
-          .fromTo(subtitle, { y: 30, opacity: 0 }, { y: 0, opacity: 1 }, "<0.3")
+        gsap
+          .timeline({
+            scrollTrigger: {
+              trigger: scrubSection,
+              start: "top 80%",
+              end: "center center",
+              scrub: 1.5,
+            },
+          })
           .fromTo(
-            line,
+            scrubSection.querySelector(".js-title"),
+            { y: 60, opacity: 0 },
+            { y: 0, opacity: 1 }
+          )
+          .fromTo(
+            scrubSection.querySelector(".js-subtitle"),
+            { y: 30, opacity: 0 },
+            { y: 0, opacity: 1 },
+            "<0.3"
+          )
+          .fromTo(
+            scrubSection.querySelector(".js-line"),
             { scaleX: 0, transformOrigin: "left center" },
             { scaleX: 1 },
             "<0.3"
           )
       }
+
+      // --- Phase 4: Pin section with scroll-driven counter + text swap ---
+      const pinSection =
+        containerRef.current?.querySelector<HTMLElement>(".js-pin-section")
+      if (pinSection) {
+        const counterEl = pinSection.querySelector<HTMLElement>(".js-counter")
+        const textEls =
+          pinSection.querySelectorAll<HTMLElement>(".js-swap-text")
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: pinSection,
+            start: "top top",
+            end: "+=200%",
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+          },
+        })
+
+        // Counter 0 → 100
+        const obj = { val: 0 }
+        tl.to(
+          obj,
+          {
+            val: 100,
+            duration: 1,
+            ease: "none",
+            onUpdate() {
+              if (counterEl)
+                counterEl.textContent = String(Math.round(obj.val)).padStart(
+                  3,
+                  "0"
+                )
+            },
+          },
+          0
+        )
+
+        // Text lines cycle through three states
+        tl.set(textEls[0], { opacity: 1 }, 0)
+          .set(textEls[1], { opacity: 0 }, 0)
+          .set(textEls[2], { opacity: 0 }, 0)
+          .to(textEls[0], { opacity: 0, duration: 0.1 }, 0.3)
+          .to(textEls[1], { opacity: 1, duration: 0.1 }, 0.3)
+          .to(textEls[1], { opacity: 0, duration: 0.1 }, 0.6)
+          .to(textEls[2], { opacity: 1, duration: 0.1 }, 0.6)
+      }
+
+      // --- Stats entrance after pin ---
+      const statItems =
+        containerRef.current?.querySelectorAll<HTMLElement>(".js-stat")
+      statItems?.forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.5,
+            delay: i * 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        )
+      })
     }, containerRef)
 
     return () => {
@@ -118,8 +200,8 @@ export default function ScrollTimeline() {
         </p>
       </section>
 
-      {/* Auto-play sections (01, 02) */}
-      {SECTIONS.slice(0, 2).map(({ index, title, subtitle }) => (
+      {/* Auto-play sections */}
+      {AUTO_SECTIONS.map(({ index, title, subtitle }) => (
         <section
           key={index}
           className="js-section-auto flex h-screen flex-col justify-center px-[10vw] border-b border-white/5"
@@ -137,24 +219,59 @@ export default function ScrollTimeline() {
         </section>
       ))}
 
-      {/* Scrub section (03) */}
+      {/* Scrub section */}
       <section className="js-section-scrub flex h-screen flex-col justify-center px-[10vw] border-b border-white/5">
         <span className="mb-6 font-mono text-xs text-[#444444] tracking-widest">
-          {SECTIONS[2].index}
+          {SCRUB_SECTION.index}
         </span>
         <h2 className="js-title mb-4 text-5xl font-bold text-white leading-tight">
-          {SECTIONS[2].title}
+          {SCRUB_SECTION.title}
         </h2>
         <p className="js-subtitle mb-8 text-lg text-[#888888] max-w-md">
-          {SECTIONS[2].subtitle}
+          {SCRUB_SECTION.subtitle}
         </p>
         <div className="js-line h-px w-48 bg-white/20" />
       </section>
 
-      {/* Spacer so scrub completes before page end */}
+      {/* Phase 4: Pinned section */}
+      <section className="js-pin-section flex h-screen flex-col items-center justify-center border-b border-white/5 bg-[#111111]">
+        <span className="mb-4 font-mono text-xs text-[#444444] tracking-widest">
+          04 — pin
+        </span>
+        <div className="js-counter font-mono text-[12rem] font-bold leading-none text-white tabular-nums">
+          000
+        </div>
+        <div className="relative mt-6 h-6 overflow-hidden">
+          <p className="js-swap-text absolute font-mono text-sm text-[#888888]">
+            initializing scroll engine...
+          </p>
+          <p className="js-swap-text absolute font-mono text-sm text-[#888888]">
+            tracking position in real time...
+          </p>
+          <p className="js-swap-text absolute font-mono text-sm text-[#888888]">
+            scroll complete — frame perfect.
+          </p>
+        </div>
+      </section>
+
+      {/* Stats after pin */}
+      <section className="flex h-screen items-center justify-center gap-24 border-b border-white/5">
+        {STATS.map(({ value, label }) => (
+          <div key={label} className="js-stat flex flex-col items-center gap-2">
+            <span className="font-mono text-5xl font-bold text-white">
+              {value}
+            </span>
+            <span className="font-mono text-xs text-[#666666] tracking-widest uppercase">
+              {label}
+            </span>
+          </div>
+        ))}
+      </section>
+
+      {/* Footer spacer */}
       <section className="h-screen flex items-center justify-center">
         <p className="font-mono text-xs text-[#333333] tracking-widest uppercase">
-          end of phase 3
+          end of phase 4
         </p>
       </section>
     </main>
