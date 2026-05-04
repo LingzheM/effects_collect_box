@@ -73,6 +73,15 @@ export const effects: Effect[] = [
     description: "Physics tomatoes rain into calendar cells; calendar cells act as physics containers",
     createdAt: "2026-04-29",
   },
+  {
+    slug: "scroll-timeline",
+    title: "Scroll Timeline",
+    category: "scroll",
+    tech: ["gsap", "lenis"],
+    element: "section",
+    description: "滚动驱动的入场时间线，元素按编排顺序依次滑入淡入，Lenis 丝滑滚动 + GSAP ScrollTrigger 控制节奏",
+    createdAt: "2026-05-04",
+  },
 ]
 
 export type CardSize = "large" | "medium" | "small"
