@@ -39,6 +39,16 @@ const H_PANELS = [
   { index: "D", heading: "Complete", sub: "Lenis + GSAP, end to end" },
 ]
 
+// Background tones matched to page sections
+const BG_STOPS = [
+  { section: ".js-hero", color: "#0A0A0A" },
+  { section: ".js-section-auto:nth-of-type(1)", color: "#0D0D0D" },
+  { section: ".js-section-auto:nth-of-type(2)", color: "#111111" },
+  { section: ".js-section-scrub", color: "#131313" },
+  { section: ".js-mask-section", color: "#0F0F0F" },
+  { section: ".js-pin-section", color: "#0A0A0A" },
+]
+
 export default function ScrollTimeline() {
   const lenisRef = useRef<Lenis | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -139,7 +149,6 @@ export default function ScrollTimeline() {
           },
         })
 
-        // Counter 0 → 100
         const obj = { val: 0 }
         tl.to(
           obj,
@@ -158,7 +167,6 @@ export default function ScrollTimeline() {
           0
         )
 
-        // Text lines cycle through three states
         tl.set(textEls[0], { opacity: 1 }, 0)
           .set(textEls[1], { opacity: 0 }, 0)
           .set(textEls[2], { opacity: 0 }, 0)
@@ -190,10 +198,9 @@ export default function ScrollTimeline() {
 
         hTl.to(hTrack, { x: -totalShift, ease: "none" })
 
-        // Panel entrance: when each panel is centred in the viewport
         const panels = hTrack.querySelectorAll<HTMLElement>(".js-h-panel")
         panels.forEach((panel, i) => {
-          if (i === 0) return // first panel visible from start
+          if (i === 0) return
           const panelTitle = panel.querySelector(".js-panel-title")
           const panelSub = panel.querySelector(".js-panel-sub")
 
@@ -201,8 +208,10 @@ export default function ScrollTimeline() {
             .timeline({
               scrollTrigger: {
                 trigger: hWrapper,
-                start: () => `top top+=${(totalShift / panels.length) * i - 80}`,
-                end: () => `top top+=${(totalShift / panels.length) * i + 100}`,
+                start: () =>
+                  `top top+=${(totalShift / panels.length) * i - 80}`,
+                end: () =>
+                  `top top+=${(totalShift / panels.length) * i + 100}`,
                 scrub: 0.8,
                 invalidateOnRefresh: true,
               },
@@ -238,6 +247,65 @@ export default function ScrollTimeline() {
           }
         )
       })
+
+      // =====================================================================
+      // Phase 6: Visual polish
+      // =====================================================================
+
+      // 6a — Background colour morphs section-to-section
+      BG_STOPS.forEach(({ section, color }, i) => {
+        if (i === 0) return
+        const el = containerRef.current?.querySelector<HTMLElement>(section)
+        if (!el) return
+        gsap.to(containerRef.current, {
+          backgroundColor: color,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 60%",
+            end: "top 20%",
+            scrub: true,
+          },
+        })
+      })
+
+      // 6b — Parallax decorative ring in hero (moves at 0.3× scroll speed)
+      const ring = containerRef.current?.querySelector<HTMLElement>(".js-parallax-ring")
+      if (ring) {
+        gsap.to(ring, {
+          y: "-30%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: containerRef.current?.querySelector(".js-hero"),
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        })
+      }
+
+      // 6c — Clip-path mask reveal on the dedicated reveal section
+      const maskSection =
+        containerRef.current?.querySelector<HTMLElement>(".js-mask-section")
+      if (maskSection) {
+        const words = maskSection.querySelectorAll<HTMLElement>(".js-mask-word")
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: maskSection,
+            start: "top 70%",
+            end: "center 40%",
+            scrub: 1,
+          },
+        })
+        words.forEach((word, i) => {
+          tl.fromTo(
+            word,
+            { clipPath: "inset(0 100% 0 0)" },
+            { clipPath: "inset(0 0% 0 0)", ease: "power2.inOut" },
+            i * 0.15
+          )
+        })
+      }
     }, containerRef)
 
     return () => {
@@ -249,9 +317,28 @@ export default function ScrollTimeline() {
 
   return (
     <main ref={containerRef} className="bg-[#0A0A0A]">
-      {/* Hero */}
-      <section className="flex h-screen items-center justify-center border-b border-white/5">
-        <p className="font-mono text-sm text-[#888888] tracking-widest uppercase">
+      {/* Hero — with parallax ring */}
+      <section className="js-hero relative flex h-screen items-center justify-center overflow-hidden border-b border-white/5">
+        {/* Parallax layer: decorative ring moves at 0.3× speed */}
+        <div
+          className="js-parallax-ring pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: "min(70vw, 70vh)",
+            height: "min(70vw, 70vh)",
+            borderRadius: "50%",
+            border: "1px solid rgba(255,255,255,0.04)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{
+            width: "min(50vw, 50vh)",
+            height: "min(50vw, 50vh)",
+            borderRadius: "50%",
+            border: "1px solid rgba(255,255,255,0.03)",
+          }}
+        />
+        <p className="relative font-mono text-sm text-[#888888] tracking-widest uppercase">
           Scroll to explore ↓
         </p>
       </section>
@@ -287,6 +374,27 @@ export default function ScrollTimeline() {
           {SCRUB_SECTION.subtitle}
         </p>
         <div className="js-line h-px w-48 bg-white/20" />
+      </section>
+
+      {/* Phase 6: Mask reveal section */}
+      <section className="js-mask-section flex h-screen flex-col justify-center px-[10vw] border-b border-white/5">
+        <span className="mb-6 font-mono text-xs text-[#444444] tracking-widest">
+          06 — reveal
+        </span>
+        <div className="flex flex-wrap gap-x-4 gap-y-2">
+          {["Curtain", "pulled", "back.", "Word", "by", "word."].map((word) => (
+            <span
+              key={word}
+              className="js-mask-word inline-block text-5xl font-bold text-white leading-tight"
+              style={{ clipPath: "inset(0 100% 0 0)" }}
+            >
+              {word}
+            </span>
+          ))}
+        </div>
+        <p className="mt-6 text-[#666666] text-sm font-mono max-w-xs">
+          clip-path slides from right to left as you scroll
+        </p>
       </section>
 
       {/* Phase 4: Pinned section */}
@@ -328,7 +436,10 @@ export default function ScrollTimeline() {
       <div className="js-h-wrapper overflow-hidden" style={{ height: "100vh" }}>
         <div
           className="js-h-track flex"
-          style={{ width: `${H_PANELS.length * 100}vw`, willChange: "transform" }}
+          style={{
+            width: `${H_PANELS.length * 100}vw`,
+            willChange: "transform",
+          }}
         >
           {H_PANELS.map(({ index, heading, sub }) => (
             <div
@@ -349,10 +460,10 @@ export default function ScrollTimeline() {
         </div>
       </div>
 
-      {/* Footer spacer */}
+      {/* Footer */}
       <section className="h-screen flex items-center justify-center">
         <p className="font-mono text-xs text-[#333333] tracking-widest uppercase">
-          end of phase 5
+          end
         </p>
       </section>
     </main>
