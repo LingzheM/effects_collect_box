@@ -32,6 +32,13 @@ const STATS = [
   { value: 0, label: "jank frames" },
 ]
 
+const H_PANELS = [
+  { index: "A", heading: "Horizontal", sub: "Vertical scroll drives lateral motion" },
+  { index: "B", heading: "Momentum", sub: "Four panels — one continuous gesture" },
+  { index: "C", heading: "Sync", sub: "Each panel fires its own entrance timeline" },
+  { index: "D", heading: "Complete", sub: "Lenis + GSAP, end to end" },
+]
+
 export default function ScrollTimeline() {
   const lenisRef = useRef<Lenis | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -161,6 +168,55 @@ export default function ScrollTimeline() {
           .to(textEls[2], { opacity: 1, duration: 0.1 }, 0.6)
       }
 
+      // --- Phase 5: Horizontal scroll driven by vertical scroll ---
+      const hTrack =
+        containerRef.current?.querySelector<HTMLElement>(".js-h-track")
+      const hWrapper =
+        containerRef.current?.querySelector<HTMLElement>(".js-h-wrapper")
+      if (hTrack && hWrapper) {
+        const totalShift = hTrack.scrollWidth - hWrapper.offsetWidth
+
+        const hTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: hWrapper,
+            start: "top top",
+            end: () => `+=${totalShift}`,
+            pin: true,
+            scrub: 1,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        })
+
+        hTl.to(hTrack, { x: -totalShift, ease: "none" })
+
+        // Panel entrance: when each panel is centred in the viewport
+        const panels = hTrack.querySelectorAll<HTMLElement>(".js-h-panel")
+        panels.forEach((panel, i) => {
+          if (i === 0) return // first panel visible from start
+          const panelTitle = panel.querySelector(".js-panel-title")
+          const panelSub = panel.querySelector(".js-panel-sub")
+
+          gsap
+            .timeline({
+              scrollTrigger: {
+                trigger: hWrapper,
+                start: () => `top top+=${(totalShift / panels.length) * i - 80}`,
+                end: () => `top top+=${(totalShift / panels.length) * i + 100}`,
+                scrub: 0.8,
+                invalidateOnRefresh: true,
+              },
+            })
+            .fromTo(panelTitle, { y: 30, opacity: 0 }, { y: 0, opacity: 1 })
+            .fromTo(
+              panelSub,
+              { y: 15, opacity: 0 },
+              { y: 0, opacity: 1 },
+              "<0.2"
+            )
+        })
+      }
+
       // --- Stats entrance after pin ---
       const statItems =
         containerRef.current?.querySelectorAll<HTMLElement>(".js-stat")
@@ -268,10 +324,35 @@ export default function ScrollTimeline() {
         ))}
       </section>
 
+      {/* Phase 5: Horizontal scroll wrapper */}
+      <div className="js-h-wrapper overflow-hidden" style={{ height: "100vh" }}>
+        <div
+          className="js-h-track flex"
+          style={{ width: `${H_PANELS.length * 100}vw`, willChange: "transform" }}
+        >
+          {H_PANELS.map(({ index, heading, sub }) => (
+            <div
+              key={index}
+              className="js-h-panel flex h-screen w-screen flex-col items-center justify-center border-r border-white/5 bg-[#0D0D0D]"
+            >
+              <span className="mb-4 font-mono text-xs text-[#444444] tracking-widest">
+                05 — {index}
+              </span>
+              <h2 className="js-panel-title mb-3 text-6xl font-bold text-white">
+                {heading}
+              </h2>
+              <p className="js-panel-sub font-mono text-sm text-[#666666] max-w-xs text-center">
+                {sub}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Footer spacer */}
       <section className="h-screen flex items-center justify-center">
         <p className="font-mono text-xs text-[#333333] tracking-widest uppercase">
-          end of phase 4
+          end of phase 5
         </p>
       </section>
     </main>
