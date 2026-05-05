@@ -15,7 +15,9 @@ const FRAG = /* glsl */`
   precision highp float;
 
   uniform float uTime;
-  varying vec2 vUv;
+  uniform vec2  uMouse;   // cursor in UV [0,1]
+  uniform float uAspect;  // width / height
+  varying vec2  vUv;
 
   float hash(vec2 p) {
     p = fract(p * vec2(127.1, 311.7));
@@ -46,14 +48,29 @@ const FRAG = /* glsl */`
   }
 
   void main() {
+    // --- base texture (phase 1) ---
     vec2 uv = vUv + vec2(uTime * 0.008, uTime * 0.005);
     float n = fbm(uv * 5.0);
-
-    // Map into [0.02, 0.08] — stone-dark luminance range
     float lum = 0.02 + n * 0.06;
-    vec3 col = vec3(lum * 0.82, lum * 0.88, lum); // cool stone tint
+    vec3 col = vec3(lum * 0.82, lum * 0.88, lum);
 
-    // Vignette: darken edges
+    // --- cursor light (phase 2) ---
+    // Aspect-correct both pixel and cursor UV so the falloff is circular
+    vec2 pixelA = vec2(vUv.x * uAspect, vUv.y);
+    vec2 mouseA = vec2(uMouse.x * uAspect, uMouse.y);
+    float d = distance(pixelA, mouseA);
+
+    float radius = 0.38 * uAspect; // keep apparent size consistent across resolutions
+    float light  = smoothstep(radius, 0.0, d);
+
+    // Warm candlelight colour; additive blend onto stone surface
+    vec3 lightCol = vec3(1.0, 0.52, 0.12);
+    col += lightCol * light * 0.22;
+
+    // Clamp: max illuminated luminance stays dim — "candle in dark", not floodlight
+    col = min(col, vec3(0.28, 0.18, 0.08));
+
+    // --- vignette (phase 1) ---
     float vign = smoothstep(0.45, 0.95, length(vUv - 0.5) * 1.6);
     col *= 1.0 - vign * 0.65;
 
@@ -79,12 +96,23 @@ export default function DarkAmbientEnv() {
     const geometry = new THREE.PlaneGeometry(2, 2)
     const material = new THREE.ShaderMaterial({
       uniforms: {
-        uTime: { value: 0 },
+        uTime:   { value: 0 },
+        uMouse:  { value: new THREE.Vector2(0.5, 0.5) }, // start at center
+        uAspect: { value: mount.clientWidth / mount.clientHeight },
       },
       vertexShader: VERT,
       fragmentShader: FRAG,
     })
     scene.add(new THREE.Mesh(geometry, material))
+
+    function onPointerMove(e: PointerEvent) {
+      const rect = mount.getBoundingClientRect()
+      material.uniforms.uMouse.value.set(
+        (e.clientX - rect.left) / rect.width,
+        1.0 - (e.clientY - rect.top) / rect.height,
+      )
+    }
+    mount.addEventListener("pointermove", onPointerMove)
 
     let rafId: number
     function animate(ms: number) {
@@ -96,12 +124,14 @@ export default function DarkAmbientEnv() {
 
     function onResize() {
       renderer.setSize(mount.clientWidth, mount.clientHeight)
+      material.uniforms.uAspect.value = mount.clientWidth / mount.clientHeight
     }
     window.addEventListener("resize", onResize)
 
     return () => {
       cancelAnimationFrame(rafId)
       window.removeEventListener("resize", onResize)
+      mount.removeEventListener("pointermove", onPointerMove)
       renderer.dispose()
       geometry.dispose()
       material.dispose()
