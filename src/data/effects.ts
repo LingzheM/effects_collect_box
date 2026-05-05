@@ -65,6 +65,15 @@ export const effects: Effect[] = [
     createdAt: "2026-05-03",
   },
   {
+    slug: "dark-ambient-env",
+    title: "Dark Ambient Environment",
+    category: "background",
+    tech: ["webgl", "shader"],
+    style: ["dark", "ambient"],
+    description: "GPU-side FBM generates a dark stone-textured scene with slow UV drift and vignette; the spatial stage for other effects",
+    createdAt: "2026-05-05",
+  },
+  {
     slug: "tomato-calendar",
     title: "Tomato Calendar",
     category: "background",
