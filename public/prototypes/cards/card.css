@@ -1,0 +1,19 @@
+.card {
+  width: 320px;
+  height: 220px;
+  border-radius: 22px;
+  /* 磨砂质感 */
+  background: linear-gradient(145deg,
+    rgba(255 255 255 / 0.78),
+    rgba(255 255 255 / 0.42)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.card.focus {
+  background: linear-gradient(150deg, #27262b, #1a191e);
+  box-shadow: 
+    0 50px 80px -20px rgba(0 0 0 / 0.45),
+    0 20px 40px -10px rgba(0 0 0 / 0.35);
+  border: 1px solid #3a393f;
+}
