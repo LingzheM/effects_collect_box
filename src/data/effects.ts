@@ -91,6 +91,16 @@ export const effects: Effect[] = [
     description: "滚动驱动的入场时间线，元素按编排顺序依次滑入淡入，Lenis 丝滑滚动 + GSAP ScrollTrigger 控制节奏",
     createdAt: "2026-05-04",
   },
+  {
+    slug: "map-roulette",
+    title: "Map Roulette",
+    category: "click",
+    tech: ["css", "svg"],
+    style: ["minimal"],
+    element: "list",
+    description: "老虎机式国家随机选择器：easeOutExpo 驱动列表高速旋转减速，配合 SVG 世界地图实时高亮选中国家",
+    createdAt: "2026-05-09",
+  },
 ]
 
 export type CardSize = "large" | "medium" | "small"
