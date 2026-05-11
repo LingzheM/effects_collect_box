@@ -1,0 +1,119 @@
+<html lang="en">
+
+<head>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      font-family: system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      background: #F5F5F0;
+      color: #1A1A1A;
+      overflow: hidden;
+    }
+
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      grid-template-rows: 2fr 1fr;
+      height: 100dvh;
+      width: 100vw;
+    }
+
+    .panel-left {
+      grid-row: 1 / 3;
+      border-right: 1px solid #D4D4D0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 0 24px;
+      height: 48px;
+      border-bottom: 1px solid #D4D4D0;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1A1A1A;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-left .panel-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 0;
+      position: relative;
+    }
+
+    #radial-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <div class="panel-left">
+      <div class="panel-body">
+        <svg id="radial-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+          <circle cx="0" cy="400" r="30" fill="#C23B22"></circle>
+          <line x1="30" y1="400" x2="800" y2="400" stroke="#C0C0BC" stroke-width="1"></line>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.000" x="-120.95491027832031" y="-126.11567687988281" width="97.79411315917969" height="28.031299591064453" transform="rotate(-80 -109.70294761319619 -112.1000315663482)" fill="rgb(0,20,170)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.000" x="-76.66604614257812" y="-116.92306518554688" width="131.65884399414062" height="29.28325653076172" transform="rotate(-75 -65.41409654668922 -102.2814296703155)" fill="rgb(16,35,175)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.005" x="-33.40148162841797" y="-105.15972137451172" width="128.27465057373047" height="33.03912353515625" transform="rotate(-70 -22.149525470652208 -88.6401628086723)" fill="rgb(32,49,181)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.142" x="8.509540557861328" y="-88.42559051513672" width="134.5293731689453" height="34.291080474853516" transform="rotate(-65 19.7614961051637 -71.28004925905799)" fill="rgb(48,64,186)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.269" x="48.748043060302734" y="-68.73070526123047" width="174.46009826660156" height="36.794992446899414" transform="rotate(-60 60.00000000000006 -50.33320996790809)" fill="rgb(64,79,191)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.386" x="87.00779724121094" y="-45.608516693115234" width="142.67215728759766" height="39.298906326293945" transform="rotate(-55 98.25974690254401 -25.95906303027573)" fill="rgb(80,93,197)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.492" x="122.99760437011719" y="-18.618541717529297" width="134.45619201660156" height="40.55086135864258" transform="rotate(-50 134.24955703700044 1.6568895781314268)" fill="rgb(96,108,202)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.589" x="156.4435577392578" y="11.403064727783203" width="130.90311431884766" height="41.80282211303711" transform="rotate(-45 167.69552621700473 32.30447378299533)" fill="rgb(112,123,207)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.675" x="188.34312438964844" y="44.22305679321289" width="136.7021255493164" height="43.05477523803711" transform="rotate(-40 198.34311042186857 65.75044296299961)" fill="rgb(128,138,213)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.751" x="214.70712280273438" y="80.21286010742188" width="115.83333587646484" height="43.05477523803711" transform="rotate(-35 225.95906303027573 101.74025309745605)" fill="rgb(143,152,218)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.817" x="239.0812530517578" y="117.22065734863281" width="213.715576171875" height="45.558685302734375" transform="rotate(-30 250.33320996790815 140.00000000000006)" fill="rgb(159,167,223)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.873" x="260.0281066894531" y="156.8331756591797" width="202.26194763183594" height="46.81064224243164" transform="rotate(-25 271.280049259058 180.2385038948363)" fill="rgb(175,182,228)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.919" x="277.3882141113281" y="198.74420166015625" width="141.20500946044922" height="46.81064224243164" transform="rotate(-20 288.64016280867236 222.14952547065226)" fill="rgb(191,196,234)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.954" x="292.28143310546875" y="242.00877380371094" width="133.40928649902344" height="46.81064224243164" transform="rotate(-15 302.2814296703155 265.4140965466892)" fill="rgb(207,211,239)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.980" x="302.10003662109375" y="285.671630859375" width="122.2496337890625" height="48.062599182128906" transform="rotate(-10 312.1000315663482 309.7029476131962)" fill="rgb(223,226,244)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.995" x="308.021240234375" y="330.6477355957031" width="112.4687271118164" height="48.062599182128906" transform="rotate(-5 318.02124300770765 354.67901377121774)" fill="rgb(239,240,250)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="1.000" x="310" y="375.9687194824219" width="165.59857177734375" height="48.062599182128906" transform="rotate(0 320 400)" fill="rgb(255,255,255)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.995" x="308.021240234375" y="421.2897033691406" width="237.00131225585938" height="48.062599182128906" transform="rotate(5 318.02124300770765 445.32098622878226)" fill="rgb(239,240,250)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.980" x="302.10003662109375" y="466.2657470703125" width="150.5360107421875" height="48.062599182128906" transform="rotate(10 312.1000315663482 490.2970523868038)" fill="rgb(223,226,244)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.954" x="292.28143310546875" y="511.1805419921875" width="166.6353759765625" height="46.81064224243164" transform="rotate(15 302.2814296703155 534.5859034533107)" fill="rgb(207,211,239)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.919" x="278.6401672363281" y="554.4451293945312" width="344.0805969238281" height="46.81064224243164" transform="rotate(20 288.64016280867236 577.8504745293477)" fill="rgb(191,196,234)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.873" x="261.2800598144531" y="596.3561401367188" width="156.72410583496094" height="46.81064224243164" transform="rotate(25 271.280049259058 619.7614961051637)" fill="rgb(175,182,228)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.817" x="240.3332061767578" y="637.2206420898438" width="113.29029846191406" height="45.558685302734375" transform="rotate(30 250.33320996790815 660)" fill="rgb(159,167,223)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.751" x="215.95907592773438" y="676.732421875" width="140.64704132080078" height="43.05477523803711" transform="rotate(35 225.95906303027573 698.259746902544)" fill="rgb(143,152,218)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.675" x="188.34312438964844" y="712.72216796875" width="248.22772216796875" height="43.05477523803711" transform="rotate(40 198.34311042186857 734.2495570370004)" fill="rgb(128,138,213)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.589" x="157.69552612304688" y="746.794189453125" width="159.4390869140625" height="41.802818298339844" transform="rotate(45 167.69552621700473 767.6955262170047)" fill="rgb(112,123,207)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.492" x="124.24955749511719" y="778.0677490234375" width="115.98983764648438" height="40.55086135864258" transform="rotate(50 134.24955703700044 798.3431104218686)" fill="rgb(96,108,202)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.386" x="88.25975799560547" y="806.3096313476562" width="104.5070571899414" height="39.298906326293945" transform="rotate(55 98.25974690254401 825.9590630302757)" fill="rgb(80,93,197)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.269" x="50" y="831.9356689453125" width="138.5615692138672" height="36.794992446899414" transform="rotate(60 60.00000000000006 850.333209967908)" fill="rgb(64,79,191)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.142" x="9.761495590209961" y="854.134521484375" width="141.14632415771484" height="34.291080474853516" transform="rotate(65 19.7614961051637 871.2800492590579)" fill="rgb(48,64,186)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.005" x="-32.1495246887207" y="872.1205444335938" width="107.656494140625" height="33.03912353515625" transform="rotate(70 -22.149525470652208 888.6401628086724)" fill="rgb(32,49,181)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.000" x="-75.41409301757812" y="887.6397705078125" width="106.75665283203125" height="29.28325653076172" transform="rotate(75 -65.41409654668922 902.2814296703154)" fill="rgb(16,35,175)"></rect>
+          <rect rx="4" ry="4" pointer-events="none" opacity="0.000" x="-119.70294952392578" y="898.0844116210938" width="111.01329803466797" height="28.031299591064453" transform="rotate(80 -109.70294761319619 912.1000315663482)" fill="rgb(0,20,170)"></rect><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-109.70294761319619" y="-112.1000315663482" transform="rotate(-80 -109.70294761319619 -112.1000315663482)" font-size="15.0" opacity="0.000" data-idx="259" font-weight="400" letter-spacing="0">Whitestone</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-65.41409654668922" y="-102.2814296703155" transform="rotate(-75 -65.41409654668922 -102.2814296703155)" font-size="16.8" opacity="0.000" data-idx="260" font-weight="400" letter-spacing="0">Williamsbridge</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-22.149525470652208" y="-88.6401628086723" transform="rotate(-70 -22.149525470652208 -88.6401628086723)" font-size="18.5" opacity="0.005" data-idx="261" font-weight="400" letter-spacing="0">Williamsburg</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="19.7614961051637" y="-71.28004925905799" transform="rotate(-65 19.7614961051637 -71.28004925905799)" font-size="20.1" opacity="0.142" data-idx="262" font-weight="400" letter-spacing="0">Willowbrook</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="60.00000000000006" y="-50.33320996790809" transform="rotate(-60 60.00000000000006 -50.33320996790809)" font-size="21.6" opacity="0.269" data-idx="263" font-weight="400" letter-spacing="0">Windsor Terrace</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="98.25974690254401" y="-25.95906303027573" transform="rotate(-55 98.25974690254401 -25.95906303027573)" font-size="22.9" opacity="0.386" data-idx="264" font-weight="400" letter-spacing="0">Woodhaven</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="134.24955703700044" y="1.6568895781314268" transform="rotate(-50 134.24955703700044 1.6568895781314268)" font-size="24.1" opacity="0.492" data-idx="265" font-weight="400" letter-spacing="0">Woodlawn</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="167.69552621700473" y="32.30447378299533" transform="rotate(-45 167.69552621700473 32.30447378299533)" font-size="25.3" opacity="0.589" data-idx="266" font-weight="400" letter-spacing="0">Woodrow</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="198.34311042186857" y="65.75044296299961" transform="rotate(-40 198.34311042186857 65.75044296299961)" font-size="26.3" opacity="0.675" data-idx="267" font-weight="400" letter-spacing="0">Woodside</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="225.95906303027573" y="101.74025309745605" transform="rotate(-35 225.95906303027573 101.74025309745605)" font-size="27.1" opacity="0.751" data-idx="0" font-weight="400" letter-spacing="0">Allerton</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="250.33320996790815" y="140.00000000000006" transform="rotate(-30 250.33320996790815 140.00000000000006)" font-size="27.9" opacity="0.817" data-idx="1" font-weight="400" letter-spacing="0">Alley Pond Park</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="271.280049259058" y="180.2385038948363" transform="rotate(-25 271.280049259058 180.2385038948363)" font-size="28.5" opacity="0.873" data-idx="2" font-weight="400" letter-spacing="0">Arden Heights</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="288.64016280867236" y="222.14952547065226" transform="rotate(-20 288.64016280867236 222.14952547065226)" font-size="29.1" opacity="0.919" data-idx="3" font-weight="400" letter-spacing="0">Arlington</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="302.2814296703155" y="265.4140965466892" transform="rotate(-15 302.2814296703155 265.4140965466892)" font-size="29.5" opacity="0.954" data-idx="4" font-weight="400" letter-spacing="0">Arrochar</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="312.1000315663482" y="309.7029476131962" transform="rotate(-10 312.1000315663482 309.7029476131962)" font-size="29.8" opacity="0.980" data-idx="5" font-weight="400" letter-spacing="0">Arverne</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="318.02124300770765" y="354.67901377121774" transform="rotate(-5 318.02124300770765 354.67901377121774)" font-size="29.9" opacity="0.995" data-idx="6" font-weight="400" letter-spacing="0">Astoria</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#C23B22" x="320" y="400" transform="rotate(0 320 400)" font-size="30.0" opacity="1.000" data-idx="7" font-weight="700" letter-spacing="-0.02em">Bath Beach</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="318.02124300770765" y="445.32098622878226" transform="rotate(5 318.02124300770765 445.32098622878226)" font-size="29.9" opacity="0.995" data-idx="8" font-weight="400" letter-spacing="0">Battery Park City</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="312.1000315663482" y="490.2970523868038" transform="rotate(10 312.1000315663482 490.2970523868038)" font-size="29.8" opacity="0.980" data-idx="9" font-weight="400" letter-spacing="0">Bay Ridge</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="302.2814296703155" y="534.5859034533107" transform="rotate(15 302.2814296703155 534.5859034533107)" font-size="29.5" opacity="0.954" data-idx="10" font-weight="400" letter-spacing="0">Bay Terrace</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="288.64016280867236" y="577.8504745293477" transform="rotate(20 288.64016280867236 577.8504745293477)" font-size="29.1" opacity="0.919" data-idx="11" font-weight="400" letter-spacing="0">Bay Terrace, Staten Island</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="271.280049259058" y="619.7614961051637" transform="rotate(25 271.280049259058 619.7614961051637)" font-size="28.5" opacity="0.873" data-idx="12" font-weight="400" letter-spacing="0">Baychester</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="250.33320996790815" y="660" transform="rotate(30 250.33320996790815 660)" font-size="27.9" opacity="0.817" data-idx="13" font-weight="400" letter-spacing="0">Bayside</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="225.95906303027573" y="698.259746902544" transform="rotate(35 225.95906303027573 698.259746902544)" font-size="27.1" opacity="0.751" data-idx="14" font-weight="400" letter-spacing="0">Bayswater</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="198.34311042186857" y="734.2495570370004" transform="rotate(40 198.34311042186857 734.2495570370004)" font-size="26.3" opacity="0.675" data-idx="15" font-weight="400" letter-spacing="0">Bedford-Stuyvesant</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="167.69552621700473" y="767.6955262170047" transform="rotate(45 167.69552621700473 767.6955262170047)" font-size="25.3" opacity="0.589" data-idx="16" font-weight="400" letter-spacing="0">Belle Harbor</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="134.24955703700044" y="798.3431104218686" transform="rotate(50 134.24955703700044 798.3431104218686)" font-size="24.1" opacity="0.492" data-idx="17" font-weight="400" letter-spacing="0">Bellerose</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="98.25974690254401" y="825.9590630302757" transform="rotate(55 98.25974690254401 825.9590630302757)" font-size="22.9" opacity="0.386" data-idx="18" font-weight="400" letter-spacing="0">Belmont</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="60.00000000000006" y="850.333209967908" transform="rotate(60 60.00000000000006 850.333209967908)" font-size="21.6" opacity="0.269" data-idx="19" font-weight="400" letter-spacing="0">Bensonhurst</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="19.7614961051637" y="871.2800492590579" transform="rotate(65 19.7614961051637 871.2800492590579)" font-size="20.1" opacity="0.142" data-idx="20" font-weight="400" letter-spacing="0">Bergen Beach</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-22.149525470652208" y="888.6401628086724" transform="rotate(70 -22.149525470652208 888.6401628086724)" font-size="18.5" opacity="0.005" data-idx="21" font-weight="400" letter-spacing="0">Bloomfield</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-65.41409654668922" y="902.2814296703154" transform="rotate(75 -65.41409654668922 902.2814296703154)" font-size="16.8" opacity="0.000" data-idx="22" font-weight="400" letter-spacing="0">Boerum Hill</text><text text-anchor="start" dominant-baseline="central" font-family="system-ui, -apple-system, sans-serif" cursor="pointer" fill="#1A1A1A" x="-109.70294761319619" y="912.1000315663482" transform="rotate(80 -109.70294761319619 912.1000315663482)" font-size="15.0" opacity="0.000" data-idx="23" font-weight="400" letter-spacing="0">Borough Park</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
