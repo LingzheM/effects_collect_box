@@ -7,9 +7,10 @@ type Props = {
   description: string
   size: CardSize
   count: number
+  accentColor: string
 }
 
-export function EffectCard({ category, label, description, size, count }: Props) {
+export function EffectCard({ category, label, description, size, count, accentColor }: Props) {
   return (
     <TransitionLink
       href={`/${category}`}
@@ -19,7 +20,8 @@ export function EffectCard({ category, label, description, size, count }: Props)
       <div
         className="flex-1"
         style={{
-          backgroundImage: "radial-gradient(#e4e4e7 1px, transparent 1px)",
+          backgroundColor: accentColor,
+          backgroundImage: "radial-gradient(rgba(255,255,255,0.18) 1px, transparent 1px)",
           backgroundSize: "16px 16px",
         }}
       />
