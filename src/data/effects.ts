@@ -28,6 +28,16 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "ascii-card",
+    title: "ASCII Card",
+    category: "hover",
+    tech: ["canvas"],
+    style: ["pixel"],
+    element: "card",
+    description: "Canvas-rendered ASCII sphere that breathes with layered sine-wave noise; hover accelerates the animation",
+    createdAt: "2026-05-13",
+  },
+  {
     slug: "book-flip",
     title: "Book Flip",
     category: "hover",
