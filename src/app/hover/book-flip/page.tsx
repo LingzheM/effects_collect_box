@@ -1,41 +1,86 @@
-import type { Metadata } from "next"
-import styles from "./book.module.css"
+"use client"
 
-export const metadata: Metadata = {
-  title: "Book Flip — Effects Shelf",
-}
+import { useState } from "react"
+import { BookCover } from "@/components/book-hover"
 
 export default function BookFlipPage() {
+  const [stiffness, setStiffness] = useState(300)
+  const [damping, setDamping] = useState(20)
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#f5f5f5]">
-      <div className={styles.scene}>
-        <div className={styles.bookGroup}>
-          <div className={styles.backCover} />
-          <div className={styles.pages}>
-            <div className={styles.pageLines} />
-            <div className={styles.pageEdgeRight} />
-            <div className={styles.pageEdgeBottom} />
-          </div>
-          <div className={styles.spine}>
-            <div className={styles.spineLines} />
-          </div>
-          <div className={styles.frontCover}>
-            <div className={styles.coverFace}>
-              <div className={styles.coverTitle}>
-                Design
-                <br />
-                Systems
-              </div>
-              <div className={styles.coverLine} />
-              <div className={styles.coverSubtitle}>ALLA KHOLMATOVA</div>
-            </div>
-            <div className={styles.coverInner} />
-            <div className={styles.coverThicknessTop} />
-            <div className={styles.coverThicknessRight} />
-            <div className={styles.coverThicknessBottom} />
-          </div>
-        </div>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 48,
+        background: "#f1f5f9",
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
+      <BookCover spring={{ stiffness, damping }} />
+      <div
+        style={{
+          background: "#fff",
+          padding: 24,
+          borderRadius: 12,
+          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.06)",
+          width: 320,
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
+        }}
+      >
+        <ControlSlider
+          label="Stiffness (劲度)"
+          value={stiffness}
+          min={50}
+          max={1000}
+          step={10}
+          onChange={setStiffness}
+        />
+        <ControlSlider
+          label="Damping (阻尼)"
+          value={damping}
+          min={1}
+          max={60}
+          step={1}
+          onChange={setDamping}
+        />
+        <p style={{ margin: 0, fontSize: 12, color: "#64748b" }}>
+          推荐组合：300 / 20，500 / 35，120 / 22
+        </p>
       </div>
-    </main>
+    </div>
+  )
+}
+
+interface ControlSliderProps {
+  label: string
+  value: number
+  min: number
+  max: number
+  step: number
+  onChange: (v: number) => void
+}
+
+function ControlSlider({ label, value, min, max, step, onChange }: ControlSliderProps) {
+  return (
+    <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14 }}>
+      <span style={{ display: "flex", justifyContent: "space-between" }}>
+        <strong>{label}</strong>
+        <code>{value}</code>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+      />
+    </label>
   )
 }
