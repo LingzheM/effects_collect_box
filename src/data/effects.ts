@@ -28,6 +28,16 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "book-hover",
+    title: "Book Hover",
+    category: "hover",
+    tech: ["framer-motion"],
+    style: ["3d"],
+    element: "book",
+    description: "Framer Motion spring-driven book cover that flips open on click; stiffness and damping are tunable in real time",
+    createdAt: "2026-05-14",
+  },
+  {
     slug: "ascii-card",
     title: "ASCII Card",
     category: "hover",
@@ -41,10 +51,10 @@ export const effects: Effect[] = [
     slug: "book-flip",
     title: "Book Flip",
     category: "hover",
-    tech: ["framer-motion"],
+    tech: ["css"],
     style: ["3d"],
     element: "book",
-    description: "Framer Motion spring-driven book cover that flips open on click; spring stiffness and damping are tunable",
+    description: "Pure CSS hardcover book that opens its cover on hover using 3D transforms",
     createdAt: "2026-04-26",
   },
   {

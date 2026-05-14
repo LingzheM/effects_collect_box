@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 
 const spring = { type: "spring" as const, stiffness: 300, damping: 20, restDelta: 0.001 }
 
-export function BookFlipPreview() {
+export function BookHoverPreview() {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {

@@ -4,8 +4,8 @@ import dynamic from "next/dynamic"
 import type { ComponentType } from "react"
 
 const registry: Record<string, ComponentType> = {
-  "book-flip": dynamic(() =>
-    import("@/app/hover/book-flip/preview").then((m) => ({ default: m.BookFlipPreview }))
+  "book-hover": dynamic(() =>
+    import("@/app/hover/book-hover/preview").then((m) => ({ default: m.BookHoverPreview }))
   ),
 }
 
