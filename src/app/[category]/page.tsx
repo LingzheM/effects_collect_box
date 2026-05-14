@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation"
 import { TransitionLink } from "@/components/transition-link"
+import { EffectLivePreview } from "@/components/effect-live-preview"
 import { effects, categoryMeta } from "@/data/effects"
 import type { Category } from "@/data/effects"
 
@@ -46,12 +47,14 @@ export default async function CategoryPage({ params }: Props) {
                 className="flex flex-col overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all hover:border-zinc-200 hover:shadow-md"
               >
                 <div
-                  className="h-[180px]"
+                  className="relative h-[180px]"
                   style={{
                     backgroundImage: "radial-gradient(#e4e4e7 1px, transparent 1px)",
                     backgroundSize: "16px 16px",
                   }}
-                />
+                >
+                  <EffectLivePreview slug={effect.slug} />
+                </div>
                 <div className="border-t border-zinc-100 p-3">
                   <div className="text-sm font-semibold text-zinc-800">{effect.title}</div>
                   <p className="mt-0.5 text-xs text-zinc-400">{effect.description}</p>

@@ -41,10 +41,10 @@ export const effects: Effect[] = [
     slug: "book-flip",
     title: "Book Flip",
     category: "hover",
-    tech: ["css"],
+    tech: ["framer-motion"],
     style: ["3d"],
     element: "book",
-    description: "Pure CSS hardcover book that opens its cover on hover using 3D transforms",
+    description: "Framer Motion spring-driven book cover that flips open on click; spring stiffness and damping are tunable",
     createdAt: "2026-04-26",
   },
   {
