@@ -28,6 +28,16 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "book-hover",
+    title: "Book Hover",
+    category: "hover",
+    tech: ["framer-motion"],
+    style: ["3d"],
+    element: "book",
+    description: "Framer Motion spring-driven boo cover that flips open on click",
+    createdAt: "2026-05-14",
+  },
+  {
     slug: "ascii-card",
     title: "ASCII Card",
     category: "hover",
