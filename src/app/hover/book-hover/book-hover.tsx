@@ -29,7 +29,6 @@ export function BookCover({
     inset: 0,
     borderRadius: 10,
     background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-    boxShadow: '0 12px 32px rgba(29. 78, 216, 0.2)',
   };
 
   return (
@@ -39,30 +38,30 @@ export function BookCover({
         width: 240,
         aspectRatio: '3 / 4',
         position: 'relative',
-        perspective: 1200,
+        perspective: 1200,  // 视角
         cursor: 'pointer',
         userSelect: 'none', 
       }}
     >
       {/** 文件夹后壳 (Back Flap) - 始终静止在最底层 */}
-      <div style={{ ...folderBaseStyle, zIndex: 1 }}/>
+      <div style={{ ...folderBaseStyle, zIndex: 1, boxShadow: '0 4px 12px rgba(29, 78, 216, 0.15)'}}/>
 
       {/** 中间的文件卡片 (Card) - 层级为 2 */}
       <motion.div
         animate={{
-          x: isOpen ? 40 : 0, // 稍微向右偏移
-          y: isOpen ? -60 : 0,  // 向上滑出更多，制造“抽出来”的感觉
+          x: isOpen ? 60 : 0, // 稍微向右偏移
+          y: isOpen ? -80 : 0,  // 向上滑出更多，制造“抽出来”的感觉
           scale: isOpen ? 1.05 : 1,
-          rotate: isOpen ? 2 : 0, // 旋转感
+          rotate: isOpen ? 5 : 0, // 旋转感
         }}
           transition={springTransition}
           style={{
             position: 'absolute',
-            inset: '5px',
+            inset: 0,
             zIndex: 2,
             background: '#fff',
             borderRadius: 8,
-            boxShadow: '0 4px 32px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
             padding: 20,
             color: '#0f172a',
             display: 'flex',
@@ -78,13 +77,14 @@ export function BookCover({
       
       {/** 3. 前盖（Front Flap） - 层级为3 */}
       <motion.div
-        animate={{ rotateY: isOpen ? -110: 0 }}
+        animate={{ rotateY: isOpen ? -130: 0 }}
         transition={springTransition}
         style={{
           ...folderBaseStyle,
           zIndex: 3,
           transformOrigin: 'left center',
-          backfaceVisibility: 'hidden',
+          // backfaceVisibility: 'hidden', 
+          boxShadow: '0 12px 32px rgba(29, 78, 216, 0.35)',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
