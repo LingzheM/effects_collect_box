@@ -6,6 +6,7 @@ import { BookCover } from "./book-hover"
 export default function BookFlipPage() {
   const [stiffness, setStiffness] = useState(300)
   const [damping, setDamping] = useState(20)
+  const [rotation, setRotation] = useState(-20)
 
   return (
     <div
@@ -33,6 +34,14 @@ export default function BookFlipPage() {
           gap: 16,
         }}
       >
+        <ControlSlider 
+          label="rotate (前盖翻转角度)"
+          value={rotation}
+          min={-20}
+          max={-130}
+          step={5}
+          onChange={setRotation}
+        />
         <ControlSlider
           label="Stiffness (劲度)"
           value={stiffness}
