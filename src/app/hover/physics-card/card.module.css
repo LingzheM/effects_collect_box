@@ -1,0 +1,63 @@
+.stage {
+  perspective: 1200px;  /* 视距 */
+  display: inline-block;
+}
+
+/* 卡片本体 */
+.card {
+  position: relative;
+  width: 320px;
+  height: 420px;
+  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+  border: 1px, solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 24px;
+  color: #ffffff;
+
+  /* 核心：允许子元素在 3D 空间渲染 */
+  transform-style: preserve-3d;
+
+  /* 性能 */
+  will-change: transform, box-shadow;
+
+  /* 缓冲过渡：0.1s-0.15s的cubic-bezier可以带来最佳的阻尼物理感 */
+  transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1),
+              box-shadow 0.15s cubic-bezier(0.25, 1, 0.5, 1);
+  
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+/* 视差层 */
+.parallaxContent {
+  /* 关键：沿Z轴向前推进 40px,产生前后落差的 3D 视差 */
+  transform: translateZ(40px);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 磁吸动态光晕 */
+.glare {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* 穿透，不干扰 */
+  background: radial-gradient(
+    circle at var(--x, 50%) var(--y, 50%),
+    rgba(255, 255, 255, 0.12) 0%,
+    transparent 65%
+  );
+  mix-blend-mode: overlay; /* 混合模式 */
+}
+
+.card:active {
+  /* 点击时：瞬间整体等比压缩，并向 Z 轴深处陷入，阴影收紧 */
+  transform: scale(0.96) translateZ(-10px) !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4) !important;
+  transition: transform 0.05s ease, box-shadow 0.05 ease;
+}
