@@ -27,6 +27,16 @@ export type Effect = {
 }
 
 export const effects: Effect[] = [
+    {
+    slug: "physics-card",
+    title: "Physics Card",
+    category: "hover",
+    tech: ["rotation"],
+    style: ["physics"],
+    element: "card",
+    description: "physics rotation",
+    createdAt: "2026-05-16",
+  },
   {
     slug: "book-hover",
     title: "Book Hover",
