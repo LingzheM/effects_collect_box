@@ -1,0 +1,38 @@
+.orbitScene {
+  position: relative;
+  width: 600px; /* 轨道的直径范围 */
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+}
+
+/* 公转轨道容器 */
+.orbitRoot {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: orbitRotate 20s linear infinite; /* 自动公转 */
+}
+
+/* 卡片锚点：定位在圆周上的某一点 */
+.cardAnchor {
+  position: absolute;
+  top: 0; /* 放在圆周顶部 */
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* 反向旋转，确保卡片永远“头朝上” */
+  animation: counterRotate 20s linear infinite;
+}
+
+@keyframes orbitRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes counterRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }  /* 与父级度数相反 */
+}
+
