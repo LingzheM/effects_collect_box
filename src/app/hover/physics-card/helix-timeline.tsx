@@ -43,41 +43,94 @@ export default function HelixTimeline() {
 
   // 物理拖拽相关 Refs
   const isDragging = useRef(false);
-  const rafId = useRef(null);
-  const autoSpeed = useRef(0.0008); //自动旋转速度
-  const isAutoRotaing = useRef(true); // 是否开启自动旋转
-
   // 用于在动画帧中直接读取/写入的进度值，避免React状态更新延迟
   const progressRef = useRef(0);
+  const startY = useRef(0);
+  const startProgress = useRef(0);
+  const currentVelocity = useRef(0);
+  const lastY = useRef(0);
+  const lastTime = useRef(0);
+  const rafId = useRef(null);
 
+  const autoSpeed = useRef(0.0008); //自动旋转速度
+  const isAutoRotaing = useRef(true); // 是否开启自动旋转
+  const autoRafId = useRef<number | null>(null);
+
+
+  // ==================== 自动旋转 ====================
   useEffect(() => {
-    let rafIdAuto: number;
-
     const autoRotate = () => {
       if (!isDragging.current && isAutoRotaing.current) {
         progressRef.current += autoSpeed.current;
         setGlobalProgress(progressRef.current);
       }
-      rafIdAuto = requestAnimationFrame(autoRotate);
+      autoRafId.current = requestAnimationFrame(autoRotate);
     };
 
-    rafIdAuto = requestAnimationFrame(autoRotate);
+    autoRafId.current = requestAnimationFrame(autoRotate);
     
-    return () => cancelAnimationFrame(rafIdAuto);
-  })
+    return () => {
+      if (autoRafId.current) cancelAnimationFrame(autoRafId.current);
+    }
+  }, []);
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    isDragging.current = true;
+    startY.current = e.clientY;
+    startProgress.current = progressRef.current;
+    lastY.current = e.clientY;
+    lastTime.current = performance.now();
+    currentVelocity.current = 0;
 
+    if (rafId.current) cancelAnimationFrame(rafId.current);
   }
 
-  const handlePointerMove = () => {
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging.current) return;
 
+    const deltaY = e.clientY - startY.current;
+    // 灵敏度换算：移动 1500 像素等于转完完整的一轮（进度增加 1.0）
+    const deltaProgress = deltaY / 1500;
+
+    progressRef.current = startProgress.current + deltaProgress;
+    setGlobalProgress(progressRef.current);
+
+    // 计算瞬时速度用于惯性
+    const now = performance.now();
+    const dt = Math.max(1, now - lastTime.current);
+    currentVelocity.current = (e.clientY - lastY.current) / dt;
+
+    lastY.current = e.clientY;
+    lastTime.current = now;
   }
 
   const handlePointerUp = () => {
+    if (isDragging.current) return;
+    isDragging.current = false;
 
+    // 开启惯性滑动（Inertia Scroll）
+    const decay = 0.95; //摩擦力衰减系数
+
+    const inertiaLoop = () => {
+      if (Math.abs(currentVelocity.current) > 0.08) {
+        currentVelocity.current *= decay;
+        const moveY = currentVelocity.current * 16;
+        progressRef.current += moveY / 1500;
+
+        setGlobalProgress(progressRef.current);
+        rafId.current = requestAnimationFrame(inertiaLoop);
+      } else {
+        isAutoRotaing.current = true;
+      }
+    };
+    rafId.current = requestAnimationFrame(inertiaLoop);
   }
 
+  const toggleAutoRotate = () => {
+    isAutoRotaing.current = !isAutoRotaing.current;
+  }
+
+  // 清理 RAF
   useEffect(() => {
     return () => {
       if (rafId.current) cancelAnimationFrame(rafId.current);
