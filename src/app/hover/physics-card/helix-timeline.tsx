@@ -44,8 +44,27 @@ export default function HelixTimeline() {
   // 物理拖拽相关 Refs
   const isDragging = useRef(false);
   const rafId = useRef(null);
+  const autoSpeed = useRef(0.0008); //自动旋转速度
+  const isAutoRotaing = useRef(true); // 是否开启自动旋转
 
   // 用于在动画帧中直接读取/写入的进度值，避免React状态更新延迟
+  const progressRef = useRef(0);
+
+  useEffect(() => {
+    let rafIdAuto: number;
+
+    const autoRotate = () => {
+      if (!isDragging.current && isAutoRotaing.current) {
+        progressRef.current += autoSpeed.current;
+        setGlobalProgress(progressRef.current);
+      }
+      rafIdAuto = requestAnimationFrame(autoRotate);
+    };
+
+    rafIdAuto = requestAnimationFrame(autoRotate);
+    
+    return () => cancelAnimationFrame(rafIdAuto);
+  })
 
   const handlePointerDown = () => {
 
