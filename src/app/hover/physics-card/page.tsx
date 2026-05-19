@@ -6,6 +6,10 @@
 //export default OrbitalCard
 
 
-import { CardGalleryStage } from "./card-gallery";
+// import { CardGalleryStage } from "./card-gallery";
 
-export default CardGalleryStage;
+// export default CardGalleryStage;
+
+import HelixTimeline from "./helix-timeline";
+
+export default HelixTimeline;
