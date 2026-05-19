@@ -105,7 +105,7 @@ export default function HelixTimeline() {
   }
 
   const handlePointerUp = () => {
-    if (isDragging.current) return;
+    if (!isDragging.current) return;
     isDragging.current = false;
 
     // 开启惯性滑动（Inertia Scroll）
