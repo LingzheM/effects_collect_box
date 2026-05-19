@@ -1,13 +1,37 @@
 "use client"
 
-import { useRef, useState } from "react";
-import {BookOpen} from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { 
+  Rocket, 
+  Globe, 
+  Cpu, 
+  Smartphone, 
+  Wifi, 
+  Monitor, 
+  Radio, 
+  Lightbulb, 
+  BookOpen, 
+  Atom,
+  Telescope,
+  Compass
+} from 'lucide-react';
 import { isDragging } from "framer-motion";
 
 // 模拟数据
 const TIMELINE_EVENTS = [
-  { year: "1440", title: "活字印刷术", desc: "知识开始规模传播", icon: BookOpen, color: "from-amber-400 to-orange-600" }
-]
+  { year: "1440", title: "活字印刷术", desc: "古腾堡发明活字印刷机，知识开始大规模传播。", icon: BookOpen, color: "from-amber-400 to-orange-600" },
+  { year: "1543", title: "日心说", desc: "哥白尼发表《天体运行论》，引发科学革命。", icon: Telescope, color: "from-blue-400 to-indigo-600" },
+  { year: "1879", title: "白炽灯", desc: "爱迪生改进电灯，人类真正征服了黑夜。", icon: Lightbulb, color: "from-yellow-300 to-amber-500" },
+  { year: "1895", title: "无线电通信", desc: "马可尼发明无线电报，开启即时通讯时代。", icon: Radio, color: "from-emerald-400 to-teal-600" },
+  { year: "1938", title: "核裂变", desc: "哈恩和斯特拉斯曼发现核裂变，原子能时代到来。", icon: Atom, color: "from-red-400 to-rose-600" },
+  { year: "1946", title: "第一台计算机", desc: "ENIAC 诞生，标志着信息时代的正式开启。", icon: Monitor, color: "from-cyan-400 to-blue-600" },
+  { year: "1969", title: "阿波罗登月", desc: "人类首次踏上月球，拓展了宇宙的边界。", icon: Rocket, color: "from-purple-400 to-fuchsia-600" },
+  { year: "1971", title: "微处理器", desc: "Intel 4004 问世，个人电脑成为可能。", icon: Cpu, color: "from-slate-300 to-gray-500" },
+  { year: "1989", title: "万维网", desc: "蒂姆·伯纳斯-李发明 WWW，连接了整个世界。", icon: Globe, color: "from-blue-500 to-cyan-500" },
+  { year: "1997", title: "Wi-Fi 协议", desc: "802.11 标准确立，移动互联网的隐形桥梁。", icon: Wifi, color: "from-teal-300 to-emerald-500" },
+  { year: "2007", title: "智能手机", desc: "初代 iPhone 发布，重塑了人类的生活方式。", icon: Smartphone, color: "from-zinc-400 to-neutral-600" },
+  { year: "2024", title: "通用人工智能", desc: "AI 迎来爆发，人类站在新的纪元路口。", icon: Compass, color: "from-indigo-400 to-purple-600" },
+];
 
 const RADIUS = 320; // 螺旋的半径（决定圆柱的粗细）
 const HEIGHT_SPAN = 1200; // 整个螺旋在屏幕上下跨越了总高度
@@ -19,6 +43,7 @@ export default function HelixTimeline() {
 
   // 物理拖拽相关 Refs
   const isDragging = useRef(false);
+  const rafId = useRef(null);
 
   // 用于在动画帧中直接读取/写入的进度值，避免React状态更新延迟
 
@@ -33,6 +58,12 @@ export default function HelixTimeline() {
   const handlePointerUp = () => {
 
   }
+
+  useEffect(() => {
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, []);
 
   return (
     <div
@@ -115,9 +146,9 @@ export default function HelixTimeline() {
               }}
             >
               {/** 卡片 UI 本身 */}
-              <div className="w-64 h-80 bg-neutral-900/80 backdrop-blur-md border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_30px_rgba(0, 0, 0, 0.8)] relative overflow-hidden group">
+              <div className="w-64 h-80 bg-neutral-900/80 backdrop-blur-md border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_30px_rgba(0,0,0,0.8)] relative overflow-hidden group">
                 {/** 发光背景点缀 */}
-                <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br ${event.color} rounded-full blur-[50]px opacity-20`}></div>
+                <div className={`absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br ${event.color} rounded-full blur-[50px] opacity-20`}></div>
 
                 <div className="relative z-10">
                   <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${event.color} p-[1px] mb-4`}>
