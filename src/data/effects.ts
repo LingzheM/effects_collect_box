@@ -28,6 +28,16 @@ export type Effect = {
 
 export const effects: Effect[] = [
     {
+      slug: "ferris-wheel",
+      title: "Feerri Wheel",
+      category: "hover",
+      tech: ["rotation"],
+      style: ["cartoon"],
+      element: "card",
+      description: "ferris wheel",
+      createdAt: "2026-05-16",
+    },
+    {
     slug: "physics-card",
     title: "Physics Card",
     category: "hover",
