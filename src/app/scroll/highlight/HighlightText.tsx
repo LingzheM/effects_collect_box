@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
 
-const FADED = 0.2;  //未点亮时的透明度
+const FADED = 0.2;  // 未点亮时的透明度
 const STAGGER = 0.1  // 字符之间的延迟
+const START_RADIO = 0.80; // 元素顶部到达视口 80% 时， 进度 = 0
+const END_RADIO = 0.50; // 元素中心到达视口 50% 时，进度 = 1
 
 interface ScrollHighlightTextProps {
   text: string;
@@ -32,6 +34,22 @@ export default function ScrollHighlightText({
 
     return { wordStructure: structure, totalChars: globalCharIndex };
   }, [text]);
+
+  // 2. 计算当前滚动进度
+  const calculateProgress = useCallback(() => {
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const vh = window.innerHeight;
+
+    const startPx = vh * START_RADIO;
+    const endPx = vh * END_RADIO - rect.height / 2;
+
+    const raw = (rect.top - endPx) / (startPx - endPx);
+    const clampedProgress = Math.max(0, Math.min(1, 1 - raw));
+    
+    setProgress(clampedProgress);
+  }, []);
 
   // 3. 绑定滚动事件（带 raf 节流）
   useEffect(() => {
