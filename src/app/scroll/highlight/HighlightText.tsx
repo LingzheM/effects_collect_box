@@ -47,7 +47,7 @@ export default function ScrollHighlightText({
 
     const raw = (rect.top - endPx) / (startPx - endPx);
     const clampedProgress = Math.max(0, Math.min(1, 1 - raw));
-    
+
     setProgress(clampedProgress);
   }, []);
 
@@ -56,12 +56,12 @@ export default function ScrollHighlightText({
     let ticking = false;
 
     const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          calculateProgress();
-        });
-        ticking = false;
-      }
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        calculateProgress();
+      });
+      ticking = false;
     };
 
     // 初始化执行一次，防止元素已经在视口中但没计算
@@ -96,7 +96,7 @@ export default function ScrollHighlightText({
               <span
                 key={`char-${item.globalCharIndex}`}
                 className="char"
-                style={{ opacity: getCharOpacity(item.globalIndex) }}
+                style={{ opacity: getCharOpacity(item.globalCharIndex) }}
               >
                 {item.char}
               </span>
