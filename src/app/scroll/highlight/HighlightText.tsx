@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
 
 const FADED = 0.2;  //未点亮时的透明度
@@ -32,6 +32,31 @@ export default function ScrollHighlightText({
 
     return { wordStructure: structure, totalChars: globalCharIndex };
   }, [text]);
+
+  // 3. 绑定滚动事件（带 raf 节流）
+  useEffect(() => {
+    let ticking = false;
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          calculateProgress();
+        });
+        ticking = false;
+      }
+    };
+
+    // 初始化执行一次，防止元素已经在视口中但没计算
+    calculateProgress();
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, [calculateProgress]);
 
   // 4. 渲染辅助：计算单个字符的透明度
   const getCharOpacity = (charIndex: number): number => {

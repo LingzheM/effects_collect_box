@@ -27,6 +27,26 @@ export type Effect = {
 }
 
 export const effects: Effect[] = [
+      {
+      slug: "highlight",
+      title: "data-highlight-text",
+      category: "scroll",
+      tech: ["scroll"],
+      style: ["highlight"],
+      element: "text",
+      description: "",
+      createdAt: "2026-05-22",
+    },
+    {
+      slug: "book",
+      title: "book",
+      category: "scroll",
+      tech: ["motion"],
+      style: ["physics"],
+      element: "card",
+      description: "book",
+      createdAt: "2026-05-21",
+    },
     {
       slug: "ferris-wheel",
       title: "Feerri Wheel",
