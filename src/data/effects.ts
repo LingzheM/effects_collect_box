@@ -27,6 +27,15 @@ export type Effect = {
 }
 
 export const effects: Effect[] = [
+  {
+    slug: "carousel",
+    title: "Carousel",
+    category: "scroll",
+    tech: ["css"],
+    element: "card",
+    description: "Scroll-driven carousel",
+    createdAt: "2026-05-23",
+  },
       {
       slug: "highlight",
       title: "data-highlight-text",
