@@ -1,0 +1,188 @@
+:root {
+  --folder-color: #0b3b2c;
+  --folder-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --transition-speed: 0.8s;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── 3D 场景 ─── */
+.scene {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  width: 240px;
+  height: 320px;
+  position: relative;
+  cursor: pointer;
+}
+
+.folder {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  transform-style: preserve-3d;
+}
+
+/* ─── 显式 transition(不用通配选择器,避免影响静态 transform) ─── */
+.flap {
+  transition:
+    transform var(--transition-speed) var(--ease-out-expo),
+    opacity   var(--transition-speed) var(--ease-out-expo);
+}
+
+.pocket-base,
+.pocket-front {
+  transition:
+    transform var(--transition-speed) var(--ease-out-expo),
+    opacity   var(--transition-speed) var(--ease-out-expo);
+}
+
+.stamp-wrapper {
+  transition: transform var(--transition-speed) var(--ease-out-expo);
+}
+
+.stamp {
+  transition:
+    transform var(--transition-speed) var(--ease-out-expo),
+    box-shadow var(--transition-speed) var(--ease-out-expo);
+}
+
+.face {
+  transition: border-radius var(--transition-speed) var(--ease-out-expo);
+}
+
+/* ─── Flap 骨架 ─── */
+.flap {
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  transform-style: preserve-3d;
+  z-index: 10;
+}
+
+.flap--left {
+  left: 0;
+  transform-origin: left center;
+}
+
+.flap--right {
+  right: 0;
+  transform-origin: right center;
+}
+
+/* ─── 正反两面 ─── */
+.face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  background-color: var(--folder-color);
+  box-sizing: border-box;
+}
+
+.face--front {
+  z-index: 2;
+}
+
+.face--back {
+  z-index: 1;
+  transform: rotateY(180deg);
+}
+
+/* ─── 圆角:默认状态四角全圆 ─── */
+.flap--left .face--front,
+.flap--left .face--back,
+.flap--right .face--front,
+.flap--right .face--back {
+  border-radius: 8px;
+}
+
+/* ─── 圆角:hover 展开后 back 面只保留视觉外侧圆角 ───
+   back 面被预先 rotateY(180deg) 翻过来,DOM 左右与视觉左右镜像,
+   因此「视觉左圆」要写成「DOM 右圆」,反之亦然 */
+.scene:hover:not(.is-active) .flap--left .face--back {
+  border-radius: 0 8px 8px 0;  /* DOM 右圆 = 视觉左圆(外侧) */
+}
+
+.scene:hover:not(.is-active) .flap--right .face--back {
+  border-radius: 8px 0 0 8px;  /* DOM 左圆 = 视觉右圆(外侧) */
+}
+
+/* ─── 左 flap 封面的排版 ─── */
+.flap--left .face--front {
+  padding: 24px 12px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ─── 底板与口袋遮罩 ─── */
+.pocket-base {
+  position: absolute;
+  inset: 0;
+  background-color: var(--folder-color);
+  border-radius: 8px;
+  box-shadow: var(--folder-shadow);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.pocket-front {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  background-color: var(--folder-color);
+  z-index: 5;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ─── 状态 1:hover 未点击 → 折页展开 ─── */
+.scene:hover:not(.is-active) .flap--left {
+  transform: rotateY(-130deg);
+}
+
+.scene:hover:not(.is-active) .flap--right {
+  transform: rotateY(130deg);
+}
+
+.scene:hover:not(.is-active) .stamp-wrapper {
+  transform: translate(-50%, -15px);
+}
+
+/* ─── 封面装饰 ─── */
+.logo {
+  font-size: 28px;
+  color: #fff;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.cover-title {
+  color: #fff;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.cover-title__sub {
+  opacity: 0.5;
+}
+
+/* ─── 提示文字 ─── */
+.hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #aaa;
+  font-size: 13px;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+.scene.is-active ~ .hint {
+  opacity: 0;
+}

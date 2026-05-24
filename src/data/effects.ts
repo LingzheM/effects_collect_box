@@ -28,6 +28,15 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "stamp-folder",
+    title: "Stamp Folder",
+    category: "hover",
+    tech: ["css"],
+    element: "folder",
+    description: "Stamp folder hover effect",
+    createdAt: "2026-05-24",
+  },
+  {
     slug: "carousel",
     title: "Carousel",
     category: "scroll",
