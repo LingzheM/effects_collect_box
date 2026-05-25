@@ -29,3 +29,19 @@
   transform-style: preserve-3d;
   will-change: transform;
 }
+
+.item {
+  position: absolute; /* 使用absolute，所有卡片的中心在统一水平面 */
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: outline 200ms ease;
+  outline: 1px solid transparent;
+  cursor: grab;
+}
+
+.itemActive {
+  outline: 1px solid oklch(0.78 0.12 80);
+  outline-offset: 6px;
+}
