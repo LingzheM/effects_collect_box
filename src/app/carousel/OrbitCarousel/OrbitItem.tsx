@@ -1,6 +1,7 @@
 import { type CSSProperties } from 'react';
 import styles from './OrbitCarousel.module.css';
 import { ItemLabel, OrbitConfig } from "./types";
+import { PlaceholderArt } from './PlaceholderArt';
 
 interface OrbiItemProps {
   /** 该项在轨道上的索引 */
@@ -49,7 +50,15 @@ export function OrbiItem({
       className={`${styles.item} ${isActive ? styles.itemActive : ''}`}
       style={dynamicStyle}
       >
-
+        <div className={styles.cardInner} style={{ borderRadius }}>
+          <PlaceholderArt idx={index} theme={config.theme} />
+          {config.showLabels && (
+            <div className={styles.meta}>
+              <span>{label.tag}</span>
+              <span>{label.title}</span>
+            </div>
+          )}
+        </div>
     </div>
   )
 }
