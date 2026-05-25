@@ -2,6 +2,12 @@ export type Direction = 'cw' | 'ccw';
 export type Shape = 'none' | 'rounded' | 'pill' | 'circle';
 export type Theme = 'dark' | 'light';
 
+/** 卡片标签 */
+export interface ItemLabel {
+  tag: string;
+  title: string;
+  sub: string;
+}
 
 /** 内部配置 */
 export interface OrbitConfig {
