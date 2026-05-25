@@ -29,6 +29,15 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "OrbitCarousel",
+    title: "Orbit Carousel",
+    category: "carousel",
+    tech: ["css"],
+    element: "card",
+    description: "Cards orbiting along a circular path",
+    createdAt: "2026-05-24",
+  },
+  {
     slug: "stamp-folder",
     title: "Stamp Folder",
     category: "hover",

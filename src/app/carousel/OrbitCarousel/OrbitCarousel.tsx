@@ -3,9 +3,11 @@
 import type { OrbitConfig, Shape } from "./types";
 import { ITEM_LABELS } from './data';
 import { useFrontIndex } from "./hooks/useFrontIndex";
+import { useAnimationFrame } from "./hooks/useAnimationFrame";
 import styles from './OrbitCarousel.module.css'
-import { CSSProperties, useMemo, useRef, useState } from "react";
+import { CSSProperties, useCallback, useMemo, useRef, useState } from "react";
 import { OrbiItem } from "./OrbitItem";
+
 
 export interface OrbitCarouselProps {
   /** 完整配置；支持部分覆盖默认值 */
@@ -61,6 +63,17 @@ export function OrbitCarousel({ config, onActiveChange } : OrbitCarouselProps) {
     t.radius,
     t.itemWidth,
     t.itemHeight
+  );
+
+  // 自动旋转
+  useAnimationFrame(
+    useCallback(
+      (dt: number) => {
+        const dir = t.direction === 'cw' ? -1 : 1;
+        setAngle((a) => a + dir * t.speed * dt);
+      }
+    ),
+    !isPaused
   );
 
   // 拖拽
