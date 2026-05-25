@@ -10,6 +10,7 @@ export type Category =
   | "cursor"
   | "3d-scene"
   | "gesture"
+  | "carousel"
 
 export type Tech = "css" | "framer-motion" | "canvas" | "webgl" | "shader" | string
 export type Style = "liquid-glass" | "pixel" | "gradient" | string
@@ -201,6 +202,7 @@ export const categoryMeta: Record<Category, CategoryMeta> = {
   cursor: { label: "Cursor", description: "光标相关", size: "small" },
   "3d-scene": { label: "3D Scene", description: "三维空间场景", size: "small" },
   gesture: { label: "Gesture", description: "手势驱动", size: "small" },
+  carousel: { label: "Carousel", description: "轮播、路径跟随、焦点切换", size: "medium" },
 }
 
 // Ordered for CSS Grid auto-placement: large → medium → small
@@ -216,4 +218,5 @@ export const categoryOrder: Category[] = [
   "cursor",
   "3d-scene",
   "gesture",
+  "carousel",
 ]
