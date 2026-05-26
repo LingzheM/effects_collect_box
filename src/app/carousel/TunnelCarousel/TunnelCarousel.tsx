@@ -1,7 +1,7 @@
-import { useMemo, useRef } from "react";
-import styles from './TunnelCarousel.module.css'
-import TunnelLayer from "./TunnelLayer";
-import { useScrollTransform } from "./useScrollTransform";
+import { useMemo, useRef } from 'react';
+import { TunnelLayer } from './TunnelLayer';
+import { useScrollTransform } from './useScrollTransform';
+import styles from './TunnelCarousel.module.css';
 
 export interface TunnelCarouselProps {
   /** 图片 URL 数组,如果不传就用占位图 */
@@ -20,7 +20,6 @@ export interface TunnelCarouselProps {
   travelFactor?: number;
 }
 
-
 export function TunnelCarousel({
   images,
   layerCount = 15,
@@ -32,6 +31,8 @@ export function TunnelCarousel({
 }: TunnelCarouselProps) {
   const dollyRef = useRef<HTMLDivElement>(null);
 
+  // 如果没传 images,生成占位图 URL 数组
+  // useMemo 保证只在 layerCount/images 变化时重新生成
   const layers = useMemo(() => {
     if (images && images.length > 0) return images;
     return Array.from(
@@ -40,6 +41,7 @@ export function TunnelCarousel({
     );
   }, [images, layerCount]);
 
+  // 把滚动驱动委托给 Hook,组件本身完全不知道"滚动"这件事
   useScrollTransform({ targetRef: dollyRef, travelFactor });
 
   return (
@@ -61,5 +63,5 @@ export function TunnelCarousel({
         </div>
       </div>
     </div>
-  )
+  );
 }
