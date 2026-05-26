@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import styles from './TunnelCarousel.module.css'
 import TunnelLayer from "./TunnelLayer";
+import { useScrollTransform } from "./useScrollTransform";
 
 export interface TunnelCarouselProps {
   /** 图片 URL 数组,如果不传就用占位图 */
@@ -38,6 +39,8 @@ export function TunnelCarousel({
       (_, i) => `https://picsum.photos/400/400?random=${i}`
     );
   }, [images, layerCount]);
+
+  useScrollTransform({ targetRef: dollyRef, travelFactor });
 
   return (
     <div className={styles.viewport} style={{ perspective: `${perspective}px` }}>
