@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { defaultColumns, GalleryColumnData } from "./data";
 import styles from './ScrollGallery.module.css';
 import { GalleryColumn } from "./GalleryColumn";
+import { useParallaxScroll } from "./useParallaxScroll";
 
 export interface ScrollGalleryProps {
   /** 每列配置，不传则用默认3列占位数据 */
@@ -22,6 +23,14 @@ export function ScrollGallery({
     () => columns.map(() => ({ current: null as HTMLDivElement | null })),
     [columns.length]
   );
+
+  // 把 ref + speed 打包给 Hook
+  const parallaxColumns = useMemo(
+    () => columns.map((col, i) => ({ ref: columnRefs[i], speed: col.speed })),
+    [columns, columnRefs]
+  );
+
+  useParallaxScroll({ containerRef, columns: parallaxColumns });
 
   // 为每一列预先算出 items 数据（图片 or 占位）
   const columnsWithItems = useMemo(() => {
