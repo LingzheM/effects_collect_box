@@ -1,1 +1,16 @@
 
+.item {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 4px;
+  position: relative;
+}
+
+.itemPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.1em;
+}

@@ -26,7 +26,16 @@ export function ScrollGallery({
   // 为每一列预先算出 items 数据（图片 or 占位）
   const columnsWithItems = useMemo(() => {
     return columns.map((col, colIdx) => {
-
+      const colImages = images?.[colIdx] ?? [];
+      const items = Array.from({ length: col.itemCount }, (_, i) => {
+        const src = colImages[i];
+        if (src) return { src };
+        return {
+          placeholderColor: col.palette[i % col.palette.length],
+          placeholderLabel: `IMG ${colIdx + 1}-${String(i + 1).padStart(2, '0')}`,
+        };
+      });
+      return items;
     });
   }, [columns, images]);
 
