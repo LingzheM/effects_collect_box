@@ -1,3 +1,17 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  padding: 0 25px 200px;
+  align-items: start;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  will-change: transform;
+}
 
 .item {
   aspect-ratio: 3 / 4;
