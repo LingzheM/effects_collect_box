@@ -29,6 +29,15 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "ScrollGallery",
+    title: "Scroll Gallery",
+    category: "scroll",
+    tech: ["css"],
+    element: "image",
+    description: "Parallax scroll gallery",
+    createdAt: "2026-05-24",
+  },
+  {
     slug: "TunnelCarousel",
     title: "Tunnel Carousel",
     category: "carousel",
