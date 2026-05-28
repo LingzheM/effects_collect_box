@@ -29,6 +29,15 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "butterflyScene",
+    title: "Butterfly Scene",
+    category: "background",
+    tech: ["canvas"],
+    element: "scene",
+    description: "Animated butterfly background scene",
+    createdAt: "2026-05-24",
+  },
+  {
     slug: "ScrollGallery",
     title: "Scroll Gallery",
     category: "scroll",
