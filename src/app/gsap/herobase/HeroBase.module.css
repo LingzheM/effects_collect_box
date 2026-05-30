@@ -33,3 +33,10 @@
   border: 2px solid #30363d;
   margin-bottom: 20px;
 }
+
+.bar {
+  width: 0%; /* 初始 0 ——  */
+  height: 100%;
+  background: #00ffcc;
+  box-shadow: 0 0 10px #00ffcc;
+}
