@@ -1,7 +1,7 @@
 "use client"
 
-import { HeroBadge } from "./HeroBadge"
+import { HeroBase } from "./HeroBase"
 
 export default function HeroBasePage() {
-  return <HeroBadge />
+  return <HeroBase />
 }
