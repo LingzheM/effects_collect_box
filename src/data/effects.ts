@@ -11,6 +11,7 @@ export type Category =
   | "3d-scene"
   | "gesture"
   | "carousel"
+  | "gsap"
 
 export type Tech = "css" | "framer-motion" | "canvas" | "webgl" | "shader" | string
 export type Style = "liquid-glass" | "pixel" | "gradient" | string
@@ -28,6 +29,14 @@ export type Effect = {
 }
 
 export const effects: Effect[] = [
+  {
+    slug: "herobase",
+    title: "Hero Base",
+    category: "gsap",
+    tech: ["gsap"],
+    description: "GSAP-powered hero section",
+    createdAt: "2026-05-29",
+  },
   {
     slug: "butterflyScene",
     title: "Butterfly Scene",
@@ -239,6 +248,7 @@ export const categoryMeta: Record<Category, CategoryMeta> = {
   "3d-scene": { label: "3D Scene", description: "三维空间场景", size: "small" },
   gesture: { label: "Gesture", description: "手势驱动", size: "small" },
   carousel: { label: "Carousel", description: "轮播、路径跟随、焦点切换", size: "medium" },
+  gsap: { label: "GSAP", description: "GSAP 驱动的动效", size: "medium" },
 }
 
 // Ordered for CSS Grid auto-placement: large → medium → small
@@ -255,4 +265,5 @@ export const categoryOrder: Category[] = [
   "3d-scene",
   "gesture",
   "carousel",
+  "gsap",
 ]
