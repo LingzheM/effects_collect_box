@@ -3,8 +3,8 @@
   background-color: #0d1117;
   display: flex;
   flex-direction: column;
-  justify-content: center;  /*浏览器垂直方向中间 */
-  align-items: center; /* 水平方向中间 */
+  justify-content: center;
+  align-items: center;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   overflow: hidden;
   color: white;
@@ -26,7 +26,7 @@
 
 .barContainer {
   width: 300px;
-  height: 200px;
+  height: 20px;
   background-color: #21262d;
   border-radius: 10px;
   overflow: hidden;
@@ -35,7 +35,7 @@
 }
 
 .bar {
-  width: 0%; /* 初始 0 ——  */
+  width: 0%;          /* 初始 0 —— fromTo 的起点跟这个一致 */
   height: 100%;
   background: #00ffcc;
   box-shadow: 0 0 10px #00ffcc;
@@ -52,7 +52,6 @@
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .btn:hover {
   background-color: #2ea043;
 }
