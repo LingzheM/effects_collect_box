@@ -40,3 +40,19 @@
   background: #00ffcc;
   box-shadow: 0 0 10px #00ffcc;
 }
+
+.btn {
+  background-color: #238636;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background-color: #2ea043;
+}
