@@ -30,6 +30,14 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "SpaceProbe",
+    title: "Space Probe",
+    category: "gsap",
+    tech: ["gsap"],
+    description: "GSAP timeline-driven space probe animation",
+    createdAt: "2026-05-29",
+  },
+  {
     slug: "herobase",
     title: "Hero Base",
     category: "gsap",
