@@ -14,7 +14,7 @@ import styles from './RippleGrid.module.css';
 
 export function RippleGrid() {
   const gridRef = useRef<HTMLDivElement>(null);
-  const [activeMode, setActiveMode] = useState<RippleMode>('grid');
+  const [activeMode, setActiveMode] = useState<RippleMode>('start');
 
   const { ripple } = useRipple({ gridRef });
 
@@ -27,7 +27,7 @@ export function RippleGrid() {
   // 进页面自动放一次 "grid",最能体现 stagger
   // 用 useGSAP 管理这次挂载时的动画(自动清理 / StrictMode 安全)
   useGSAP(() => {
-    ripple(MODES.grid.stagger);
+    ripple(MODES.start.stagger);
   });
 
   const totalCells = GRID_ROWS * GRID_COLS;
