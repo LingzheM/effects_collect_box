@@ -1,8 +1,7 @@
-
 import { useRef } from 'react';
-import { gsap } from 'gsap/gsap-core';
-import styles from './SpaceProbe.module.css';
 import { useGSAP } from '@gsap/react';
+import { gsap } from 'gsap';
+import styles from './SpaceProbe.module.css';
 
 export function SpaceProbe() {
   const probeRef = useRef<HTMLDivElement>(null);
@@ -12,22 +11,24 @@ export function SpaceProbe() {
 
   const { contextSafe } = useGSAP(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+
     tl.from(probeRef.current, {
       y: -500, scale: 0, duration: 1.5, ease: 'back.out(1.7)',
     })
       .to(beamRef.current, { opacity: 1, duration: 0.3 })
-      .fromTo(beamRef.current,
+      .fromTo(
+        beamRef.current,
         { rotation: -30 },
         { rotation: 30, duration: 0.8, repeat: 3, yoyo: true, ease: 'sine.inOut' }
       )
       .to(alertRef.current, {
         opacity: 1, y: -20, duration: 0.5, color: '#ff0055',
-        onStart: () => console.log('发现目标'),
+        onStart: () => console.log('发现目标!'),
       })
       .to(probeRef.current, { x: 10, repeat: 5, yoyo: true, duration: 0.1 });
 
     timelineRef.current = tl;
-  }); 
+  });   // 注意:全程用 ref 时不需要 scope
 
   const handleReplay = contextSafe(() => timelineRef.current?.restart());
 
@@ -35,14 +36,13 @@ export function SpaceProbe() {
     <div className={styles.stage}>
       <div className={styles.controls}>
         <button className={styles.button} onClick={handleReplay}>
-          重新播放
+          重新播放剧本
         </button>
       </div>
-
       <div className={styles.probeContainer}>
         <div ref={probeRef} className={styles.probeBody} />
         <div ref={beamRef} className={styles.scanBeam} />
-        <div ref={alertRef} className={styles.alertText} >Target Detected</div>
+        <div ref={alertRef} className={styles.alertText}>Target Detected</div>
       </div>
     </div>
   );

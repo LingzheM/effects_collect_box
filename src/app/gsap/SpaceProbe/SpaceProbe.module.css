@@ -32,7 +32,7 @@
   background: rgba(0, 255, 204, 0.5);
   box-shadow: 0 0 15px #00ffcc;
   transform-origin: top center;
-  opacity: 0; /* 初始隐藏，timeline 第二幕开启 */
+  opacity: 0;             /* 初始隐藏,timeline 第二幕开启 */
 }
 
 .alertText {
@@ -40,7 +40,7 @@
   bottom: -100px;
   color: #00ffcc;
   font-size: 1.2rem;
-  opacity: 0; /* 初始隐藏 */
+  opacity: 0;             /* 初始隐藏,timeline 第四幕显示 */
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -52,9 +52,9 @@
 }
 
 .button {
-  color: #00ffcc;
-  border: 1px solid #00ffcc;
   background: none;
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
   padding: 8px 16px;
   cursor: pointer;
   border-radius: 4px;
