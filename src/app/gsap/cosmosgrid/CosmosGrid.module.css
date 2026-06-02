@@ -22,7 +22,7 @@
   pointer-events: none;
 }
 
-.gridConainter {
+.gridContainer {
   display: grid;
   grid-template-columns: repeat(3, 120px);
   grid-gap: 20px;
@@ -43,4 +43,14 @@
   position: relative;
   backdrop-filter: blur(10px);
   transition: border-color 0.3s, background 0.3s;
+}
+.card:hover {
+  border-color: rgba(99, 102, 241, 0.5);
+  background: rgba(99, 102, 241, 0.05);
+}
+.cardIcon { font-size: 24px; margin-bottom: 8px; }
+.cardTitle {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 1px;
 }
