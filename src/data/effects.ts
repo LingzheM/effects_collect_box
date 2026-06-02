@@ -29,7 +29,15 @@ export type Effect = {
 }
 
 export const effects: Effect[] = [
-    {
+  {
+    slug: "cosmosgrid",
+    title: "cosmos grid",
+    category: "gsap",
+    tech: ["gsap"],
+    description: "GSAP cosmos",
+    createdAt: "2026-05-29",
+  },
+  {
     slug: "ripplegrid",
     title: "ripple grid",
     category: "gsap",
