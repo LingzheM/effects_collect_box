@@ -1,0 +1,42 @@
+.intro {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #bfe9f7 0%, #8fd4ee 60%, #6cc4e8 100%);
+  color: #0a3a52;
+  text-align: center;
+  padding: 24px;
+}
+
+.dive {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.bg { position: absolute; inset: 0; background: #6cc4e8; z-index: 0; }
+.rays {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: 
+    linear-gradient(110deg, transparent 40%, rbga(255, 255, 255, .18) 46%, transparent 52%),
+    linear-gradient(70deg, transparent 55%, rbga(255, 255, 255, .14) 60%, transparent 66%);
+}
+
+.creature {
+  position: absolute;
+  z-index: 2;
+  font-size: 46px;
+  filter: drop-shadow(0 4px 10px rbga(0, 0, 0, .3));
+  will-change: transform, opacity;
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  box-shadow: inset 0 0 200px 40px rgba(0, 0, 0, 0);
+}

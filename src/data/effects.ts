@@ -30,6 +30,14 @@ export type Effect = {
 
 export const effects: Effect[] = [
   {
+    slug: "DiveScene",
+    title: "Dive Scene",
+    category: "gsap",
+    tech: ["gsap"],
+    description: "GSAP scroll trigger",
+    createdAt: "2026-06-03",
+  },
+  {
     slug: "cosmosgrid",
     title: "cosmos grid",
     category: "gsap",
