@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import type { RefObject } from 'react';
 import styles from './DiveScene.module.css';
 
 interface DepthHudProps {
@@ -12,5 +12,5 @@ export function DepthHud({ depthRef, zoneRef }: DepthHudProps) {
       <div className={styles.depth} ref={depthRef}>0 m</div>
       <div className={styles.zone} ref={zoneRef}>阳光带 · Sunlight</div>
     </div>
-  )
+  );
 }
