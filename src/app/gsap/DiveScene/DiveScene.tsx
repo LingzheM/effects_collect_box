@@ -3,12 +3,15 @@
 import { useRef } from "react";
 import styles from './DiveScene.module.css';
 import { DepthHud } from "./DepthHud";
+import { useDiveTimeline } from "./useDiveTimeline";
 
 export function DiveScene() {
   const sceneRef = useRef<HTMLElement>(null);
   const depthRef = useRef<HTMLDivElement>(null);
   const zoneRef = useRef<HTMLDivElement>(null);
 
+  // 滚动驱动的主时间轴
+  useDiveTimeline({ sceneRef, depthRef, zoneRef });
 
   return (
     <>

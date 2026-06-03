@@ -10,6 +10,7 @@ export function DepthHud({ depthRef, zoneRef }: DepthHudProps) {
   return (
     <div className={styles.hud}>
       <div className={styles.depth} ref={depthRef}>0 m</div>
+      <div className={styles.zone} ref={zoneRef}>阳光带 · Sunlight</div>
     </div>
   )
 }
