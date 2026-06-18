@@ -10,7 +10,6 @@ export type Category =
   | "cursor"
   | "3d-scene"
   | "gesture"
-  | "carousel"
   | "gsap"
 
 export type Tech = "css" | "framer-motion" | "canvas" | "webgl" | "shader" | string
@@ -88,19 +87,21 @@ export const effects: Effect[] = [
     createdAt: "2026-05-24",
   },
   {
-    slug: "TunnelCarousel",
+    slug: "tunnel-carousel",
     title: "Tunnel Carousel",
-    category: "carousel",
+    category: "scroll",
     tech: ["css"],
+    style: ["carousel"],
     element: "card",
     description: "Scroll-driven tunnel perspective carousel",
     createdAt: "2026-05-24",
   },
   {
-    slug: "OrbitCarousel",
+    slug: "orbit-carousel",
     title: "Orbit Carousel",
-    category: "carousel",
+    category: "background",
     tech: ["css"],
+    style: ["carousel"],
     element: "card",
     description: "Cards orbiting along a circular path",
     createdAt: "2026-05-24",
@@ -279,7 +280,6 @@ export const categoryMeta: Record<Category, CategoryMeta> = {
   cursor: { label: "Cursor", description: "光标相关", size: "small" },
   "3d-scene": { label: "3D Scene", description: "三维空间场景", size: "small" },
   gesture: { label: "Gesture", description: "手势驱动", size: "small" },
-  carousel: { label: "Carousel", description: "轮播、路径跟随、焦点切换", size: "medium" },
   gsap: { label: "GSAP", description: "GSAP 驱动的动效", size: "medium" },
 }
 
@@ -296,6 +296,5 @@ export const categoryOrder: Category[] = [
   "cursor",
   "3d-scene",
   "gesture",
-  "carousel",
   "gsap",
 ]

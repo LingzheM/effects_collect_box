@@ -15,8 +15,6 @@ import {
   Telescope,
   Compass
 } from 'lucide-react';
-import { isDragging } from "framer-motion";
-
 // 模拟数据
 const TIMELINE_EVENTS = [
   { year: "1440", title: "活字印刷术", desc: "古腾堡发明活字印刷机，知识开始大规模传播。", icon: BookOpen, color: "from-amber-400 to-orange-600" },
