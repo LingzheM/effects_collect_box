@@ -77,7 +77,7 @@ export function BookCover({
       
       {/** 3. 前盖（Front Flap） - 层级为3 */}
       <motion.div
-        animate={{ rotateY: isOpen ? -130: 0 }}
+        animate={{ rotateY: isOpen ? -50: 0 }}
         transition={springTransition}
         style={{
           ...folderBaseStyle,

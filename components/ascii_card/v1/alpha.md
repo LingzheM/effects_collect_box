@@ -2,6 +2,40 @@
 
 **核心思路**：用 `<canvas>` + JavaScript，把一张图片（或一个形状）转成字符网格，通过不断改变字符的**密度/种类**来制造动态感。
 
+```
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+const chars = ' .:-=+*#%@';  // 从稀疏到密集的字符
+
+function drawASCII() {
+    // 1. 清空画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 2. 画一个底图（可以是图片、渐变、或简单形状）
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = '20px monospace';
+    
+    // 3. 循环生成字符网格
+    for (let y = 0; y < canvas.height; y += 20) {
+        for (let x = 0; x < canvas.width; x += 12) {
+            // 模拟“亮度” —— 这里用 sin 波制造流动感
+            const brightness = Math.sin(x * 0.05 + Date.now() * 0.005) * 0.5 + 0.5;
+            
+            // 根据亮度选择字符
+            const charIndex = Math.floor(brightness * (chars.length - 1));
+            ctx.fillText(chars[charIndex], x, y);
+        }
+    }
+    
+    requestAnimationFrame(drawASCII);  // 持续循环 = 动画
+}
+
+drawASCII();
+```
+
 - 字符会像**波浪一样流动**，产生动态呼吸感。
 - 完全用 JavaScript + Canvas 实现，无需外部库。
 - 性能好，容易扩展。
