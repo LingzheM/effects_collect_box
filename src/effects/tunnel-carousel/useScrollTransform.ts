@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, type RefObject } from 'react';
 
 interface UseScrollTransformOptions {
